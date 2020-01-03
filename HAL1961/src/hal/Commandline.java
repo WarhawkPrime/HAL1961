@@ -18,6 +18,6 @@ public class Commandline {
 	
 	public
 	int getCommandLineNumber() {return commandLineNumber;}
-	String getCommandName() {return commandName;}
-	double getCommandParameter() {return commandParameter;}
+	public String getCommandName() {return commandName;}
+	public double getCommandParameter() {return commandParameter;}
 }
