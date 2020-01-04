@@ -7,7 +7,7 @@ public class Page {
 	private short [] registers = null;
 
 	public Page (int pageNumber) {
-		setRegisters(new short[64]);
+		setRegisters(new short[64]);	//64 short register
 		setReferencebit(false);
 		setPageNumber(pageNumber);
 	}

@@ -555,6 +555,30 @@ public class MMU {
 
 		return pcCounter +=1;
 		//break;
+		case("LOADIND"):
+			registerNumber = (int) commandPara;
+			//lädt den Inhalt der Speicherzelle in den Accumulator, deren Adresse im Register r abgelegt ist
+
+			
+		return pcCounter +=1;
+		//break;
+		case("STOREIND"):
+			registerNumber = (int) commandPara;
+			
+			//speichert den Inhalt des Akkus in der Speicherzelle, deren Adresse im Register r steht
+		
+		return pcCounter+=1;
+		//break;
+		case("DUMPREG"):
+			//gibt den Ingalt aller Register über den Kanal 1 in der Form 'Registernummer: Registerinhalt' aus
+			
+		return pcCounter;
+		//break;
+		case("DUMPPROG"):
+			
+			//gibt den Programmspeicher über den Kanal 2 aus
+		return pcCounter;
+		//break;
 		default:
 		}
 
