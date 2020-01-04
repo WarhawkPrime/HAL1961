@@ -22,6 +22,7 @@ public class MMU {
 	private short register3;			//2k - 3k - 1
 	private short register4;			//3k - 4k - 1
 	
+	//ist das so richtig?
 	private short programmStorage1;		//0 - 1k - 1
 	private short programmStorage2;		//1k - 2k - 1
 	private short programmStorage3;		//2k - 3k - 1
