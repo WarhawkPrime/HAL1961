@@ -1,5 +1,7 @@
 package mmu;
 
+
+//hält die Seiten, reagiert auf pagefaults stack??
 public class PageTable {
 
 	public PageTable() {

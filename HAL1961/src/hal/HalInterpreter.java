@@ -74,7 +74,7 @@ LOAD 18 // Lade Inhalt von Register 18 in den Akkumulator
  * JUMPNEG	a		springt zu Programmspeicheradresse a, wenn Akkumulator negativen Wert hat
  * JUMPPOS	a		springt zu Programmspeicheradresse a, wenn Akkumulator positiven Wert hat
  * JUMPNULL	a		springt zu Programmspeicheradresse a, wenn Akkumulator den Wert 0 hat
- * JUMP		a		springt zu Programmadresse a
+ * JUMP		a		springt zu Programmspeicheradresse a
  * ADD		r		addiert den Inhalt des Registers r zum Inhalt des Akkumulator und speichert Ergebnis im Akkumulator (a = a + r)
  * ADDNUM	k		addiert Konstante k zum Inhalt des Akkumulator und speichert Ergebnis im Akkumulator (a = a + k)
  * SUB		r		subtrahiert den Inhalt des Registers r vom Inhalt des Akkumula- tors (a = a - r)
