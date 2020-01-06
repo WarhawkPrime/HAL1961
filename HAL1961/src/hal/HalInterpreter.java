@@ -104,6 +104,10 @@ public class HalInterpreter {
 		this.eaComponents = eaComponentstest;
 	}
 	
+	public HalInterpreter() {
+		
+	}
+	
 	Scanner scanner = null;
 	ArrayList<EA> eaComponents = null;
 	

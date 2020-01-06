@@ -83,7 +83,7 @@ public class MMU {
 	 * 
 	 * @param filename
 	 */
-	public void startHalInterpreter(String filename) {
+	public void startMMU(String filename) {
 
 
 
