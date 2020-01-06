@@ -9,7 +9,6 @@ import java.util.ArrayList;
 
 import java.util.Scanner;
 
-
 public class MMU {
 
 	public double akk;
@@ -43,19 +42,13 @@ public class MMU {
 	private short programmStorage3;
 
 	public ArrayList<Commandline> commandlinesInMemory = null;
+	ArrayList<String> tempcommandLines = new ArrayList<>();
 	boolean debugMode = false;
 	Scanner scanner = null;
 
 	public MMU() {
 		commandlinesInMemory = new ArrayList<Commandline>();
 	}
-
-	//==================== Deklaration der Register ====================
-	//Register in float array, von r_00 bis r_15
-
-	//register:
-
-	//Akkumulator
 
 	public int getRegisterNumber() {																								//!
 
@@ -74,21 +67,11 @@ public class MMU {
 	public void setPc(int pcContent) {this.pc = pcContent;}
 
 	//==================== Andere Variablen	====================
-
-	//arrayList um alle einzelnen commandZeilen zu speichern
-	ArrayList<String> tempcommandLines = new ArrayList<>();
-
-
 	/**
 	 * 
 	 * @param filename
 	 */
 	public void startMMU(String filename) {
-
-
-
-		//Programm Counter wird 0 gesetzt
-		//r_17 = 0;
 
 		Scanner scanner = new Scanner(System.in);
 		scanner.useDelimiter(System.lineSeparator());
@@ -101,16 +84,14 @@ public class MMU {
 
 		//commandline objekte erstellt und in Array gepackt
 		createCommandLines();
+		
+		convertCommandlinesToShortArray();	//gibt das shortarray zurück
 
 		//interpretHatProgramm durchgehen, auf Start warten und dann nacheinander die Schritte abarbeiten, debug mode nicht vergessen
-		interpretHalProgram(scanner);
+		interpretHalProgram(scanner, convertCommandlinesToShortArray());
 
 		scanner.close();
-
-
 	}
-
-
 
 
 	//Methode um die Eingabe fÃ¼r den Debug modus abzufragen
@@ -136,6 +117,7 @@ public class MMU {
 	 * @param turnOnDebugModeEingabe
 	 */
 	public void turnDebugmodeOn(String turnOnDebugModeEingabe) {
+
 		if(turnOnDebugModeEingabe.equals("y") || turnOnDebugModeEingabe.equals("Y"))  {
 			debugMode = true;
 			System.out.println("Debug Mode enabled");
@@ -229,48 +211,6 @@ public class MMU {
 	}
 
 
-	//cleansedLineCommands durchgehen, auf Start warten und dann nacheinander die Schritte abarbeiten, debug mode nicht vergessen
-	/**
-	 * 
-	 * @return
-	 */
-	public boolean interpretHalProgram(Scanner scanner) {
-
-		boolean commandsExecuted = false; //variable die bestimmt ob STOP gefunden wurde, wird dabei zurückgegeben 
-		pc = 0;	//programm counter zeigt auf aktuellen Befehl
-		boolean foundStart = false;
-
-		for(int pcCounter = pc; pcCounter < commandlinesInMemory.size();) { //geht alle Elemente durch nach pc/pcCounter
-
-			if(commandlinesInMemory.get(pcCounter).getCommandName().equals("START") || foundStart == true ) {	//wenn Start gefunden wird
-
-				foundStart = true;
-
-				if(debugMode == true) {	//ist der debugModus angeschaltet?
-					showsDebugMode(pcCounter);
-				}
-
-				pcCounter = executeCommand(commandlinesInMemory.get(pcCounter), scanner, pcCounter); //PC fehlt noch
-
-				if(pcCounter == -1) { 	//wenn pc von STOP -1 gesetzt wurde, dann:
-					System.out.println("Befehl: STOP");
-					return commandsExecuted = true;
-				}
-
-				if(debugMode == true) {	//ist der debugModus angeschaltet?
-					showsDebugMode(pcCounter - 1);
-				}
-
-
-			}
-			else {	//Start nicht in diesem Durchlauf erhöt wird
-				pcCounter++; //pc / pcCounter wird um 1 erhöt
-			}
-		}
-		System.out.println("Kein Start gefunden, keine Befehle ausgeführt");	//for schleife ist durch, kein Strt gefunden
-		return commandsExecuted;
-	}
-
 
 
 
@@ -343,6 +283,199 @@ public class MMU {
 	}
 
 
+	public short[] convertCommandlinesToShortArray() {
+
+		int arraySize = commandlinesInMemory.size();
+		short [] commands = new short[arraySize];
+
+
+
+		for(int i = 0; i < commandlinesInMemory.size(); i++) {
+
+			short sc;
+			short parac;
+
+			switch( commandlinesInMemory.get(i).getCommandName() ) {
+
+			case("START"):  
+				sc = 00000;
+			parac = (short) commandlinesInMemory.get(i).getCommandParameter();
+			commands[i] = (short) (sc + parac); 
+			break;
+			case("STOP"):
+				sc = 00001;
+			parac = (short) commandlinesInMemory.get(i).getCommandParameter();
+			commands[i] = (short) (sc + parac); 
+			break;
+			case("OUT"):
+				sc = 00010;
+			parac = (short) commandlinesInMemory.get(i).getCommandParameter();
+			commands[i] = (short) (sc + parac); 
+				break;
+			case("IN"):
+				sc = 00011;
+			parac = (short) commandlinesInMemory.get(i).getCommandParameter();
+			commands[i] = (short) (sc + parac); 
+				break;
+			case("LOAD"):
+				sc = 00100;
+			parac = (short) commandlinesInMemory.get(i).getCommandParameter();
+			commands[i] = (short) (sc + parac); 
+				break;
+			case("LOADNUM"):
+				sc = 00101;
+			parac = (short) commandlinesInMemory.get(i).getCommandParameter();
+			commands[i] = (short) (sc + parac); 
+				break;
+			case("STORE"):
+				sc = 00110;
+			parac = (short) commandlinesInMemory.get(i).getCommandParameter();
+			commands[i] = (short) (sc + parac); 
+				break;
+			case("JUMPNEG"):
+				sc = 00111;
+			parac = (short) commandlinesInMemory.get(i).getCommandParameter();
+			commands[i] = (short) (sc + parac); 
+				break;
+			case("JUMPPOS"):
+				sc = 01000;
+			parac = (short) commandlinesInMemory.get(i).getCommandParameter();
+			commands[i] = (short) (sc + parac); 
+				break;
+			case("JUMPNULL"):
+				sc = 01001;
+			parac = (short) commandlinesInMemory.get(i).getCommandParameter();
+			commands[i] = (short) (sc + parac); 
+				break;
+			case("JUMP"):
+				sc = 01010;
+			parac = (short) commandlinesInMemory.get(i).getCommandParameter();
+			commands[i] = (short) (sc + parac); 
+				break;
+			case("ADD"):
+				sc = 01011;
+			parac = (short) commandlinesInMemory.get(i).getCommandParameter();
+			commands[i] = (short) (sc + parac); 
+				break;
+			case("ADDNUM"):
+				sc = 01100;
+			parac = (short) commandlinesInMemory.get(i).getCommandParameter();
+			commands[i] = (short) (sc + parac); 
+				break;
+			case("SUB"):
+				sc = 01101;
+			parac = (short) commandlinesInMemory.get(i).getCommandParameter();
+			commands[i] = (short) (sc + parac); 
+				break;
+			case("MUL"):
+				sc = 01110;
+			parac = (short) commandlinesInMemory.get(i).getCommandParameter();
+			commands[i] = (short) (sc + parac); 
+				break;
+			case("DIV"):
+				sc = 01111;
+			parac = (short) commandlinesInMemory.get(i).getCommandParameter();
+			commands[i] = (short) (sc + parac); 
+				break;
+			case("SUBNUM"):
+				sc = 10000;
+			parac = (short) commandlinesInMemory.get(i).getCommandParameter();
+			commands[i] = (short) (sc + parac); 
+				break;
+			case("MULNUM"):
+				sc = 10001;
+			parac = (short) commandlinesInMemory.get(i).getCommandParameter();
+			commands[i] = (short) (sc + parac); 
+				break;
+			case("DIVNUM"):
+				sc = 10010;
+			parac = (short) commandlinesInMemory.get(i).getCommandParameter();
+			commands[i] = (short) (sc + parac); 
+				break;
+			case("LOADIND"):
+				sc = 10011;
+			parac = (short) commandlinesInMemory.get(i).getCommandParameter();
+			commands[i] = (short) (sc + parac); 
+				break;
+			case("STOREIND"):
+				sc = 10100;
+			parac = (short) commandlinesInMemory.get(i).getCommandParameter();
+			commands[i] = (short) (sc + parac); 
+				break;
+			case("DUMPREG"):
+				sc = 10101;
+			parac = (short) commandlinesInMemory.get(i).getCommandParameter();
+			commands[i] = (short) (sc + parac); 
+				break;
+			case("DUMPPROG"):
+				sc = 10110;
+			parac = (short) commandlinesInMemory.get(i).getCommandParameter();
+			commands[i] = (short) (sc + parac); 
+				break;
+			case("ADDIND"):
+				sc = 10111;
+			parac = (short) commandlinesInMemory.get(i).getCommandParameter();
+			commands[i] = (short) (sc + parac); 
+				break;
+			default:
+
+			}
+		}
+		
+		return commands;
+	}
+
+
+
+
+
+
+	//cleansedLineCommands durchgehen, auf Start warten und dann nacheinander die Schritte abarbeiten, debug mode nicht vergessen
+	/**
+	 * 
+	 * @return
+	 */
+	public boolean interpretHalProgram(Scanner scanner, short[] commands) {
+
+		boolean commandsExecuted = false; //variable die bestimmt ob STOP gefunden wurde, wird dabei zurückgegeben 
+		pc = 0;	//programm counter zeigt auf aktuellen Befehl
+		boolean foundStart = false;
+
+		
+		for(int pcCounter = pc; pcCounter < commandlinesInMemory.size();) { //geht alle Elemente durch nach pc/pcCounter
+
+			if(commandlinesInMemory.get(pcCounter).getCommandName().equals("START") || foundStart == true ) {	//wenn Start gefunden wird
+
+				foundStart = true;
+
+				if(debugMode == true) {	//ist der debugModus angeschaltet?
+					showsDebugMode(pcCounter);
+				}
+
+				pcCounter = executeCommand(commandlinesInMemory.get(pcCounter), scanner, pcCounter); //PC fehlt noch
+
+				if(pcCounter == -1) { 	//wenn pc von STOP -1 gesetzt wurde, dann:
+					System.out.println("Befehl: STOP");
+					return commandsExecuted = true;
+				}
+
+				if(debugMode == true) {	//ist der debugModus angeschaltet?
+					showsDebugMode(pcCounter - 1);
+				}
+
+			}
+			else {	//Start nicht in diesem Durchlauf erhöt wird
+				pcCounter++; //pc / pcCounter wird um 1 erhöt
+			}
+		}
+		
+		System.out.println("Kein Start gefunden, keine Befehle ausgeführt");	//for schleife ist durch, kein Strt gefunden
+		return commandsExecuted;
+	}
+
+
+
+
 
 	//Fuehrt den uebergebenen Befehl aus
 	/**
@@ -362,31 +495,35 @@ public class MMU {
 		double registerContent;
 		double akkuTemp;
 
-
-		int eaComponentNumber;
-		EA ea = null;
-
 		/*
-		 * START			Startet das Programm
-		 * STOP				Stoppt das Programm
-		 * OUT		s		Druckt den Inhalt vom Akku Ã¼ber E/A Schnittstelle s aus
-		 * IN		s		Liest Ã¼ber E/A Schnittstelle s und schreibt den Wert in den Akku
-		 * LOAD		r		LÃ¤dt Inhalt von Register r in Akku
-		 * LOADNUM	k		LÃ¤dt konstante k in Akku
-		 * STORE	r		Speichert Inhalt von Akku in Register r
-		 * JUMPNEG	a		springt zu Programmspeicheradresse a, wenn Akkumulator negativen Wert hat
-		 * JUMPPOS	a		springt zu Programmspeicheradresse a, wenn Akkumulator positiven Wert hat
-		 * JUMPNULL	a		springt zu Programmspeicheradresse a, wenn Akkumulator den Wert 0 hat
-		 * JUMP		a		springt zu Programmadresse a
-		 * ADD		r		addiert den Inhalt des Registers r zum Inhalt des Akkumulator und speichert Ergebnis im Akkumulator (a = a + r)
-		 * ADDNUM	k		addiert Konstante k zum Inhalt des Akkumulator und speichert Ergebnis im Akkumulator (a = a + k)
-		 * SUB		r		subtrahiert den Inhalt des Registers r vom Inhalt des Akkumula- tors (a = a - r)
-		 * MUL		a
-		 * DIV		a
-		 * SUBNUM	a
-		 * MULNUM	a
-		 * DIVNUM	a 
+		 * START			00000			Startet das Programm
+		 * STOP				00001			Stoppt das Programm
+		 * OUT		s		00010			Druckt den Inhalt vom Akku Ã¼ber E/A Schnittstelle s aus
+		 * IN		s		00011			Liest Ã¼ber E/A Schnittstelle s und schreibt den Wert in den Akku
+		 * LOAD		r		00100			LÃ¤dt Inhalt von Register r in Akku
+		 * LOADNUM	k		00101			LÃ¤dt konstante k in Akku
+		 * STORE	r		00110			Speichert Inhalt von Akku in Register r
+		 * JUMPNEG	a		00111			springt zu Programmspeicheradresse a, wenn Akkumulator negativen Wert hat
+		 * JUMPPOS	a		01000			springt zu Programmspeicheradresse a, wenn Akkumulator positiven Wert hat
+		 * JUMPNULL	a		01001			springt zu Programmspeicheradresse a, wenn Akkumulator den Wert 0 hat
+		 * JUMP		a		01010			springt zu Programmadresse a
+		 * ADD		r		01011			addiert den Inhalt des Registers r zum Inhalt des Akkumulator und speichert Ergebnis im Akkumulator (a = a + r)
+		 * ADDNUM	k		01100			addiert Konstante k zum Inhalt des Akkumulator und speichert Ergebnis im Akkumulator (a = a + k)
+		 * SUB		r		01101			subtrahiert den Inhalt des Registers r vom Inhalt des Akkumula- tors (a = a - r)
+		 * MUL		a		01110			
+		 * DIV		a		01111
+		 * SUBNUM	a		10000
+		 * MULNUM	a		10001
+		 * DIVNUM	a 		10010
+		 * 
+		 * LOADIND  r		10011			lädt den Inhalt der Speicherzelle in den Accumulator, deren Adresse im Register r abgelegt ist
+		 * STOREIND r		10100			speichert den Inhalt des Akkus in der Speicherzelle, deren Adresse im Register r steht
+		 * DUMPREG			10101			gibt den Inhalt aller Register über den Kanal 1 in der Form
+		 * DUMPPROG			10110			gibt den Programmspeicher über den Kanal 2 aus
+		 * ADDIND	r		10111			
 		 */
+
+
 
 		//Schnittstelle s
 		double s = 0;
@@ -402,12 +539,11 @@ public class MMU {
 
 			return pcCounter = -1;
 
-
 		case("OUT"): 
 
-			eaComponentNumber = (int) commandPara;
-		//ea = getEAbyNumber(eaComponentNumber, eaComponents );
-		s = getAkku();
+			//eaComponentNumber = (int) commandPara;
+			//ea = getEAbyNumber(eaComponentNumber, eaComponents );
+			s = getAkku();
 
 		//ea.takeInputFromHalInp(s);
 
@@ -597,9 +733,13 @@ public class MMU {
 		return pcCounter;	//niemals!!!
 	}
 
-
-
-
+	
+	
+	
+	
+	
+	
+	
 	public String readFromIODebugMode(Scanner scanner) {
 
 		//String s;
