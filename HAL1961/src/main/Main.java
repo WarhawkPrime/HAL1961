@@ -1,3 +1,4 @@
+package main;
 import mmu.*;
 
 public class Main {
@@ -8,4 +9,3 @@ public class Main {
 		mmu.startMMU(args[0]);
 	}
 }
-	
