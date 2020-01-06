@@ -11,26 +11,37 @@ import java.util.Scanner;
 
 
 public class MMU {
-	
+
 	public double akk;
 	public int pc;
 	private VirtualStorage vm;
 	private PageTable pageTable;
-	
-	private short register0;			//0 - 1k - 1            
-	private short register1;			//1k - 2k - 1
-	private short register2;			//2k - 3k - 1                                                   
-	private short register3;			//3k - 4k - 1
-	
-	//ist das so richtig?
-	private short programmStorage0;		//0 - 1k - 1
-	private short programmStorage1;		//1k - 2k - 1
-	private short programmStorage2;		//2k - 3k - 1
-	private short programmStorage3;		//3k - 4k - 1
-	
-	
-	
-	
+
+	private short register0;			          
+	private short register1;			
+	private short register2;			                                             
+	private short register3;
+
+	private short register4;			          
+	private short register5;			
+	private short register6;			                                             
+	private short register7;
+
+	private short register8;
+	private short register9;
+	private short register10;
+	private short register11;
+
+	private short register12;
+	private short register13;
+	private short register14;			                                             
+	private short register15;
+
+	private short programmStorage0;
+	private short programmStorage1;
+	private short programmStorage2;
+	private short programmStorage3;
+
 	public ArrayList<Commandline> commandlinesInMemory = null;
 	boolean debugMode = false;
 	Scanner scanner = null;
@@ -41,16 +52,16 @@ public class MMU {
 
 	//==================== Deklaration der Register ====================
 	//Register in float array, von r_00 bis r_15
-	
+
 	//register:
 
 	//Akkumulator
-	
+
 	public int getRegisterNumber() {																								//!
-		
+
 	}
 	public double[] getRegisters() {																								//!
-		
+
 	}
 
 	//========== Getter ==========
@@ -66,8 +77,8 @@ public class MMU {
 
 	//arrayList um alle einzelnen commandZeilen zu speichern
 	ArrayList<String> tempcommandLines = new ArrayList<>();
-	
-	
+
+
 	/**
 	 * 
 	 * @param filename
@@ -117,8 +128,8 @@ public class MMU {
 		return turnOnDebugModeEingabe;
 	}
 
-	
-	
+
+
 	//Methode zum entscheiden ob der Debug modus an oder aus ist, was soll passieren wenn die eingabe falsch ist?
 	/**
 	 * 
@@ -399,7 +410,7 @@ public class MMU {
 		s = getAkku();
 
 		//ea.takeInputFromHalInp(s);
-		
+
 		System.out.println(s);
 		return pcCounter +=1;
 
@@ -407,18 +418,18 @@ public class MMU {
 		case("IN"): 
 
 			//eaComponentNumber = (int) commandPara;
-		//ea = getEAbyNumber(eaComponentNumber, eaComponents );
+			//ea = getEAbyNumber(eaComponentNumber, eaComponents );
 
-		//s = ea.sendInputToHalInp();
-		//bekommt/holt sich vom ausgewähltem ea Baustein den Wert. Der ea baustein muss sich diesen wert vorher aus dem Buffer holen
+			//s = ea.sendInputToHalInp();
+			//bekommt/holt sich vom ausgewähltem ea Baustein den Wert. Der ea baustein muss sich diesen wert vorher aus dem Buffer holen
 
-		Scanner scanner1ea = new Scanner(System.in);
+			Scanner scanner1ea = new Scanner(System.in);
 		scanner1ea.useDelimiter(System.lineSeparator());
 		System.out.println("float Input to write in Akkumulator : ");
 		scanner1ea.hasNext();
 		String inputString = scanner1ea.next();
 		s = Float.valueOf(inputString.trim()).floatValue();
-			
+
 		setAkku(s);
 
 		return pcCounter +=1;
@@ -558,27 +569,27 @@ public class MMU {
 		//break;
 		case("LOADIND"):
 			registerNumber = (int) commandPara;
-			//lädt den Inhalt der Speicherzelle in den Accumulator, deren Adresse im Register r abgelegt ist
+		//lädt den Inhalt der Speicherzelle in den Accumulator, deren Adresse im Register r abgelegt ist
 
-			
+
 		return pcCounter +=1;
 		//break;
 		case("STOREIND"):
 			registerNumber = (int) commandPara;
-			
-			//speichert den Inhalt des Akkus in der Speicherzelle, deren Adresse im Register r steht
-		
+
+		//speichert den Inhalt des Akkus in der Speicherzelle, deren Adresse im Register r steht
+
 		return pcCounter+=1;
 		//break;
 		case("DUMPREG"):
 			//gibt den Ingalt aller Register über den Kanal 1 in der Form 'Registernummer: Registerinhalt' aus
-			
-		return pcCounter;
+
+			return pcCounter;
 		//break;
 		case("DUMPPROG"):
-			
+
 			//gibt den Programmspeicher über den Kanal 2 aus
-		return pcCounter;
+			return pcCounter;
 		//break;
 		default:
 		}
