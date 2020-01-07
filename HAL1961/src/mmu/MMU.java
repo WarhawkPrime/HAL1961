@@ -22,7 +22,7 @@ public class MMU {
 	private short pageReg3;
 	
 	//dies ist ein test
-	//trest2
+	//trest2thth
 	private short register0;			          
 	private short register1;			
 	private short register2;			                                             
