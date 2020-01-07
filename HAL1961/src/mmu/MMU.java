@@ -23,6 +23,7 @@ public class MMU {
 	
 	//dies ist ein test
 	//trest2thth
+	//kjbflkiubsg
 	private short register0;			          
 	private short register1;			
 	private short register2;			                                             
