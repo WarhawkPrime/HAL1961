@@ -16,6 +16,11 @@ public class MMU {
 	private VirtualStorage vm;
 	private PageTable pageTable;
 
+	private short pageReg0;
+	private short pageReg1;
+	private short pageReg2;
+	private short pageReg3;
+	
 	private short register0;			          
 	private short register1;			
 	private short register2;			                                             
@@ -36,20 +41,19 @@ public class MMU {
 	private short register14;			                                             
 	private short register15;
 
-	private short programmStorage0;
-	private short programmStorage1;
-	private short programmStorage2;
-	private short programmStorage3;
+	private short[] programStorage;
 
 	public ArrayList<Commandline> commandlinesInMemory = null;
 	ArrayList<String> tempcommandLines = new ArrayList<>();
 	boolean debugMode = false;
 	Scanner scanner = null;
-
+ 
+	
 	public MMU() {
 		commandlinesInMemory = new ArrayList<Commandline>();
 	}
 
+	
 	public int getRegisterNumber() {																								//!
 
 	}
@@ -57,6 +61,8 @@ public class MMU {
 
 	}
 
+	
+	
 	//========== Getter ==========
 	public boolean getDebugMode() {return debugMode;}
 	public double getAkku() {return akk;}
@@ -65,6 +71,16 @@ public class MMU {
 	//========== Setter ==========
 	public void setAkku(double akkuContent) {this.akk = akkuContent;}
 	public void setPc(int pcContent) {this.pc = pcContent;}
+
+	public short[] getProgramStorage() {
+		return programStorage;
+	}
+	public void setProgramStorage(short[] programStorage) {
+		this.programStorage = programStorage;
+	}
+
+
+
 
 	//==================== Andere Variablen	====================
 	/**
@@ -88,7 +104,7 @@ public class MMU {
 		convertCommandlinesToShortArray();	//gibt das shortarray zurück
 
 		//interpretHatProgramm durchgehen, auf Start warten und dann nacheinander die Schritte abarbeiten, debug mode nicht vergessen
-		interpretHalProgram(scanner, convertCommandlinesToShortArray());
+		interpretHalProgram(scanner);
 
 		scanner.close();
 	}
@@ -422,6 +438,7 @@ public class MMU {
 			}
 		}
 		
+		this.setProgramStorage(commands);
 		return commands;
 	}
 
@@ -435,45 +452,75 @@ public class MMU {
 	 * 
 	 * @return
 	 */
-	public boolean interpretHalProgram(Scanner scanner, short[] commands) {
+	public boolean interpretHalProgram(Scanner scanner) {
 
 		boolean commandsExecuted = false; //variable die bestimmt ob STOP gefunden wurde, wird dabei zurückgegeben 
-		pc = 0;	//programm counter zeigt auf aktuellen Befehl
-		boolean foundStart = false;
-
 		
-		for(int pcCounter = pc; pcCounter < commandlinesInMemory.size();) { //geht alle Elemente durch nach pc/pcCounter
-
-			if(commandlinesInMemory.get(pcCounter).getCommandName().equals("START") || foundStart == true ) {	//wenn Start gefunden wird
-
+		this.setPc(0);
+		
+		boolean foundStart = false;
+		
+		for(int i = 0; i < this.getProgramStorage().length; i++) {
+		
+			short temp = this.getProgramStorage()[i];
+			short para = calcPara(temp);
+			short comm = calcPara(temp); 
+			
+			
+			if( comm == 00000 || foundStart ) {
+			
 				foundStart = true;
-
+				
 				if(debugMode == true) {	//ist der debugModus angeschaltet?
-					showsDebugMode(pcCounter);
+					//showsDebugMode(pcCounter);
 				}
-
-				pcCounter = executeCommand(commandlinesInMemory.get(pcCounter), scanner, pcCounter); //PC fehlt noch
-
-				if(pcCounter == -1) { 	//wenn pc von STOP -1 gesetzt wurde, dann:
+		
+				this.setPc(executeCommand(comm, para, scanner, this.getPc()));
+		
+				if(this.getPc() == -1) { 	//wenn pc von STOP -1 gesetzt wurde, dann:
 					System.out.println("Befehl: STOP");
 					return commandsExecuted = true;
 				}
 
 				if(debugMode == true) {	//ist der debugModus angeschaltet?
-					showsDebugMode(pcCounter - 1);
+					//showsDebugMode(pc - 1);
 				}
-
 			}
-			else {	//Start nicht in diesem Durchlauf erhöt wird
-				pcCounter++; //pc / pcCounter wird um 1 erhöt
+			else {
+				pc++;
 			}
 		}
-		
-		System.out.println("Kein Start gefunden, keine Befehle ausgeführt");	//for schleife ist durch, kein Strt gefunden
-		return commandsExecuted;
+		return false;
 	}
 
-
+	public short calcPara(short line) {
+		short para = 0;
+		int modifier = 1;
+		
+	    while(line > 11) {
+	        int i = (line % 10);
+	        line /= 10;
+	        para = (short) (para + (i * modifier));
+	        modifier = modifier * 10;
+	    }
+	    
+	   return para;
+	}
+	
+	public short calcCommand(short line) {
+		short comm = 0;
+		int modifier = 1;
+		
+	    while(line > 0) {
+	        int i = (line % 10);
+	        line /= 10;
+	        comm = (short) (comm + (i * modifier));
+	        modifier = modifier * 10;
+	    }
+	    
+	   return comm;
+	}
+	
 
 
 
@@ -483,11 +530,11 @@ public class MMU {
 	 * @param commandline
 	 * @return
 	 */
-	public int executeCommand(Commandline commandline, Scanner scanner, int pcCounter) {
+	public int executeCommand(short command, short para,  Scanner scanner, int pcCounter) {
 
-		int commandlineNumber = commandline.getCommandLineNumber();
-		String commandName = commandline.getCommandName();
-		double commandPara = commandline.getCommandParameter();
+		int commandlineNumber = pcCounter;
+		short commandName = command; 
+		short commandPara = para;
 
 		Instruktionssatz instructions = null;
 
