@@ -5,16 +5,29 @@ import java.util.ArrayList;
 public class VirtualStorage {
 	private ArrayList<Page> pages;
 	
+	
 	public VirtualStorage() {
-		
+		this.createPages();
 	}
 	
-	public void createPages(int pcount) {	//erstellt 64 pages mit entsprechender nummer
-		for(int i = 0; i < 64; i++) {
-			Page page = new Page(i);
-			pages.add(page);
-		}
+	private void createPages() {	//erstellt 64 pages mit entsprechender nummer
 		
+		if(this.pages == null) {
+			for(int i = 0; i < 64; i++) {
+				Page page = new Page(i);
+				pages.add(page);
+			}
+		}
+	}
+	
+	public Page getPage(int index) {
+		
+		if(index < 0 || index > 63) {
+			return null;
+		}
+		else {
+			return pages.get(index);
+		}
 	}
 
 }
