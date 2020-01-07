@@ -21,6 +21,8 @@ public class MMU {
 	private short pageReg2;
 	private short pageReg3;
 	
+	//dies ist ein test
+	
 	private short register0;			          
 	private short register1;			
 	private short register2;			                                             
