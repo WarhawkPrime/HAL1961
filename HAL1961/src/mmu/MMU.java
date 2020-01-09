@@ -59,13 +59,13 @@ public class MMU {
 	}
 
 	
-	public int getRegisterNumber() {																								//!
+	public int getRegisterNumber(int elementNumber) {																								//!
 
 	}
 	
-	public double[] getRegisters() {																								//!
+	//public double[] getRegisters() {																								//!
 
-	}
+	//}
 
 	
 	
@@ -255,7 +255,7 @@ public class MMU {
 			if(testParaForRegister(commandlinesInMemory.get(i).getCommandName()) == true) { //ist der Parameter ein Register?
 
 				int currentRegister = (int) commandlinesInMemory.get(i).getCommandParameter();	//umwandeln von float zu int
-				System.out.println("Register " + commandlinesInMemory.get(i).getCommandParameter() + " : " + register[currentRegister] );	//registerausgabe mit inhalt
+				System.out.println("Register " + commandlinesInMemory.get(i).getCommandParameter() + " : " + getRegisterNumber(currentRegister) );	//registerausgabe mit inhalt
 			}
 			//Hier eine ähnliche abfrage ob der Akku gebraucht wird!!!
 			if(testParaForAkku(commandlinesInMemory.get(i).getCommandName()) == true) {	//ist der Parameter der akku?
@@ -316,128 +316,130 @@ public class MMU {
 
 			short sc;
 			short parac;
+			
+			double mod = Math.pow(10, 11);
 
 			switch( commandlinesInMemory.get(i).getCommandName() ) {
 
 			case("START"):  
 				sc = 00000;
 			parac = (short) commandlinesInMemory.get(i).getCommandParameter();
-			commands[i] = (short) (sc + parac); 
+			commands[i] = (short) ( (sc*mod) + parac); 
 			break;
 			case("STOP"):
 				sc = 00001;
 			parac = (short) commandlinesInMemory.get(i).getCommandParameter();
-			commands[i] = (short) (sc + parac); 
+			commands[i] = (short) ((sc*mod) + parac); 
 			break;
 			case("OUT"):
 				sc = 00010;
 			parac = (short) commandlinesInMemory.get(i).getCommandParameter();
-			commands[i] = (short) (sc + parac); 
+			commands[i] = (short) ((sc*mod) + parac); 
 				break;
 			case("IN"):
 				sc = 00011;
 			parac = (short) commandlinesInMemory.get(i).getCommandParameter();
-			commands[i] = (short) (sc + parac); 
+			commands[i] = (short) ((sc*mod) + parac); 
 				break;
 			case("LOAD"):
 				sc = 00100;
 			parac = (short) commandlinesInMemory.get(i).getCommandParameter();
-			commands[i] = (short) (sc + parac); 
+			commands[i] = (short) ((sc*mod) + parac); 
 				break;
 			case("LOADNUM"):
 				sc = 00101;
 			parac = (short) commandlinesInMemory.get(i).getCommandParameter();
-			commands[i] = (short) (sc + parac); 
+			commands[i] = (short) ((sc*mod) + parac); 
 				break;
 			case("STORE"):
 				sc = 00110;
 			parac = (short) commandlinesInMemory.get(i).getCommandParameter();
-			commands[i] = (short) (sc + parac); 
+			commands[i] = (short) ((sc*mod) + parac); 
 				break;
 			case("JUMPNEG"):
 				sc = 00111;
 			parac = (short) commandlinesInMemory.get(i).getCommandParameter();
-			commands[i] = (short) (sc + parac); 
+			commands[i] = (short) ((sc*mod) + parac); 
 				break;
 			case("JUMPPOS"):
 				sc = 01000;
 			parac = (short) commandlinesInMemory.get(i).getCommandParameter();
-			commands[i] = (short) (sc + parac); 
+			commands[i] = (short) ((sc*mod) + parac); 
 				break;
 			case("JUMPNULL"):
 				sc = 01001;
 			parac = (short) commandlinesInMemory.get(i).getCommandParameter();
-			commands[i] = (short) (sc + parac); 
+			commands[i] = (short) ((sc*mod) + parac); 
 				break;
 			case("JUMP"):
 				sc = 01010;
 			parac = (short) commandlinesInMemory.get(i).getCommandParameter();
-			commands[i] = (short) (sc + parac); 
+			commands[i] = (short) ((sc*mod) + parac); 
 				break;
 			case("ADD"):
 				sc = 01011;
 			parac = (short) commandlinesInMemory.get(i).getCommandParameter();
-			commands[i] = (short) (sc + parac); 
+			commands[i] = (short) ((sc*mod) + parac); 
 				break;
 			case("ADDNUM"):
 				sc = 01100;
 			parac = (short) commandlinesInMemory.get(i).getCommandParameter();
-			commands[i] = (short) (sc + parac); 
+			commands[i] = (short) ((sc*mod) + parac); 
 				break;
 			case("SUB"):
 				sc = 01101;
 			parac = (short) commandlinesInMemory.get(i).getCommandParameter();
-			commands[i] = (short) (sc + parac); 
+			commands[i] = (short) ((sc*mod) + parac); 
 				break;
 			case("MUL"):
 				sc = 01110;
 			parac = (short) commandlinesInMemory.get(i).getCommandParameter();
-			commands[i] = (short) (sc + parac); 
+			commands[i] = (short) ((sc*mod) + parac); 
 				break;
 			case("DIV"):
 				sc = 01111;
 			parac = (short) commandlinesInMemory.get(i).getCommandParameter();
-			commands[i] = (short) (sc + parac); 
+			commands[i] = (short) ((sc*mod) + parac); 
 				break;
 			case("SUBNUM"):
 				sc = 10000;
 			parac = (short) commandlinesInMemory.get(i).getCommandParameter();
-			commands[i] = (short) (sc + parac); 
+			commands[i] = (short) ((sc*mod) + parac); 
 				break;
 			case("MULNUM"):
 				sc = 10001;
 			parac = (short) commandlinesInMemory.get(i).getCommandParameter();
-			commands[i] = (short) (sc + parac); 
+			commands[i] = (short) ((sc*mod) + parac); 
 				break;
 			case("DIVNUM"):
 				sc = 10010;
 			parac = (short) commandlinesInMemory.get(i).getCommandParameter();
-			commands[i] = (short) (sc + parac); 
+			commands[i] = (short) ((sc*mod) + parac); 
 				break;
 			case("LOADIND"):
 				sc = 10011;
 			parac = (short) commandlinesInMemory.get(i).getCommandParameter();
-			commands[i] = (short) (sc + parac); 
+			commands[i] = (short) ((sc*mod) + parac); 
 				break;
 			case("STOREIND"):
 				sc = 10100;
 			parac = (short) commandlinesInMemory.get(i).getCommandParameter();
-			commands[i] = (short) (sc + parac); 
+			commands[i] = (short) ((sc*mod) + parac); 
 				break;
 			case("DUMPREG"):
 				sc = 10101;
 			parac = (short) commandlinesInMemory.get(i).getCommandParameter();
-			commands[i] = (short) (sc + parac); 
+			commands[i] = (short) ((sc*mod) + parac); 
 				break;
 			case("DUMPPROG"):
 				sc = 10110;
 			parac = (short) commandlinesInMemory.get(i).getCommandParameter();
-			commands[i] = (short) (sc + parac); 
+			commands[i] = (short) ((sc*mod) + parac); 
 				break;
 			case("ADDIND"):
 				sc = 10111;
 			parac = (short) commandlinesInMemory.get(i).getCommandParameter();
-			commands[i] = (short) (sc + parac); 
+			commands[i] = (short) ((sc*mod) + parac); 
 				break;
 			default:
 
