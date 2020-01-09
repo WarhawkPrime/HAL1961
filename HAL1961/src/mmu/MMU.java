@@ -6,7 +6,7 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.util.ArrayList;
-
+import java.util.LinkedList;
 import java.util.Scanner;
 
 public class MMU {
@@ -20,6 +20,8 @@ public class MMU {
 	private float pageReg1;
 	private float pageReg2;
 	private float pageReg3;
+	
+	private short[] regs;
 	
 	//dies ist ein test
 	//trest2thth
@@ -52,23 +54,124 @@ public class MMU {
 	ArrayList<String> tempcommandLines = new ArrayList<>();
 	boolean debugMode = false;
 	Scanner scanner = null;
+	private long counter;
+	LogFile lf;
 	
 	public MMU() {
-		commandlinesInMemory = new ArrayList<Commandline>();
+		this.commandlinesInMemory = new ArrayList<Commandline>();
+		this.vm = new VirtualStorage();
+		this.lf = new LogFile();
+		this.pageTable = new PageTable(vm, lf);
+		this.counter = 0;
+		this.regs = new short[4];
+		
+		for (int i = 0; i < regs.length; i++) {
+			regs[i] = -1;
+		}
 	}
 	
-	public int getRegisterNumber(int elementNumber) {																								//!
-		return 0;
+	// Return segment data and handle page faults 
+	public float getSegment(int address) {
+		
+		float f; 
+		short index = pageTable.getIndexFromAddress(address);
+		PageTableEntry entry;
+		
+		// Check if address index exists in regs
+		for (int i = 0; i < regs.length; i++) {
+			
+			if(regs[i] == index) {
+				entry = pageTable.getPageEntryByIndex(index); // WARNING!! Possible error, call to function that expects PageEntry to already exist at index, might not be the case!
+				entry.setPresentBit(true);
+				//entry.setReferencedBit(true);
+				return pageTable.resolveValueAtAddress(address);
+			}
+			else if (regs[i] != index) {
+				
+				continue;
+			}
+			else {
+				regs[i] = index;
+				entry = pageTable.getPageEntryByIndex(index);
+				entry.setPresentBit(true);
+				//entry.setReferencedBit(true);
+				
+				return pageTable.resolveValueAtAddress(address);
+				
+			}
+		}
+		
+		
+		// Page fault occured if execution continues here
+		throwPageFault(index);
+		
+		//----
+		PageTableEntry pte = null;;
+		PageTableEntry temp = null;
+		
+		for (int i = 0; i < regs.length; i++) {
+			pte = pageTable.getPageEntryByIndex(regs[i]);
+			
+			if(pte.isReferenced()) {
+				continue;
+			}
+			else {
+				temp = pageTable.getPageEntryByIndex(index);
+				temp.setPresentBit(true);
+				//temp.setReferencedBit(true); -- Only need to set referenced bit when read or write to address is detected, on load there might not be one?
+				regs[i] = index;
+				pte.setPresentBit(false);
+				pte.setReferencedBit(false);
+				return pageTable.resolveValueAtAddress(address);
+			}
+		}
+		
+		temp = pageTable.getPageEntryByIndex(index);
+		temp.setPresentBit(true);
+		//temp.setReferencedBit(true); -- Only need to set referenced bit when read or write to address is detected, on load there might not be one?
+		regs[0] = index;
+		pte.setPresentBit(false);
+		pte.setReferencedBit(false);
+		return pageTable.resolveValueAtAddress(address);
+		
 	}
 	
-	public short getSegment(int number) {
-		return 0;
+	private void throwPageFault(int index) {
+		this.counter++;
+		String temp = "Page Fault No. " + this.counter + "! Requested Page " + index;
+		this.lf.logInfo(temp);
 	}
 	
-	//public double[] getRegisters() {																								//!
+	// Get page from memory
+	private Page loadMissingPage(int index) {
+		
+		Page p = this.vm.getPage(index);
+		return p;
+	}
 
-	//}
-
+	
+	// Run replacement algorithm to replace it in registers
+	private void runAlgorithm() {
+		
+	}
+	
+	
+	private Page accessPageTableWithIndex(int index) {
+		
+		Page p;
+		 
+		if(index >= entries.size()) {
+			
+			// Page isnt loaded in memory, throw PageFault and load missing Page from VirtualStorage
+			p = loadMissingPage(index);
+			return p;
+		}
+		else {
+			
+				return p;
+			
+		}
+	}
 	
 	
 	//========== Getter ==========
