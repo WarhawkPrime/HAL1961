@@ -29,6 +29,7 @@ public class MMU {
 	private short register2;			                                             
 	private short register3;
 
+	/*
 	private short register4;			          
 	private short register5;			
 	private short register6;			                                             
@@ -43,6 +44,7 @@ public class MMU {
 	private short register13;
 	private short register14;			                                             
 	private short register15;
+	*/
 
 	private short[] programStorage;
 
