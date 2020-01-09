@@ -58,11 +58,11 @@ public class MMU {
 	}
 	
 	public int getRegisterNumber(int elementNumber) {																								//!
-
+		return 0;
 	}
 	
 	public short getSegment(int number) {
-		
+		return 0;
 	}
 	
 	//public double[] getRegisters() {																								//!

@@ -3,25 +3,24 @@ package mmu;
 public class Page {
 
 	private boolean referencedBit;
-	private boolean modifiedBit;  // Bei schreibendem Zugriff gesetzt, wenn true muss Page in Speicher zurück geschrieben werden
 	private boolean presentBit;  // Bei Zugriff auf eine Page bei der dieses Bit 0 ist entsteht ein Page Fault (PF)
-	private int 	frameNumber;
-	private short[] segments = null;
+	private float[] segments = null;
+	private int pageNumber;
 
+	
 	public Page (int frameNumber) {
-		setSegments(new short[64]);	//64 short register
+		setSegments(new float[64]);	// 64 float segments
 		this.referencedBit = false;
-		this.modifiedBit = false;
 		this.presentBit = false;
-		this.frameNumber = frameNumber;  
+		this.pageNumber = frameNumber;
 	}
 
-	public boolean isReferenced() {
-		return this.referencedBit;
+	public int getPageNumber() {
+		return this.pageNumber;
 	}
 	
-	public  boolean isModified() {
-		return this.modifiedBit;
+	public boolean isReferenced() {
+		return this.referencedBit;
 	}
 	 
 	public boolean isPresent() {
@@ -32,14 +31,12 @@ public class Page {
 		this.presentBit = b;
 	}
 
-	private void setSegments(short [] segments) {
+	private void setSegments(float [] segments) {
 		this.segments = segments;
-		this.modifiedBit = true;
-		this.referencedBit = true;
 	}
 	
 	// Returns offset-specified data segment
-	public short getSegmentByOffset(int offset) {
+	public float getSegmentByOffset(short offset) {
 		if(offset < 0 || offset > 63) {
 			return -1;
 		}
@@ -50,13 +47,12 @@ public class Page {
 	}
 	
 	// Sets offset-specified data segment
-	public boolean setSegmentByOffset(int offset, short data) {
+	public boolean setSegmentByOffset(short offset, float data) {
 		if(offset < 0 || offset > 63) {
 			return false;
 		}
 		else {
 			this.segments[offset] = data;
-			this.modifiedBit = true;
 			this.referencedBit = true;
 			return true;
 		}	
