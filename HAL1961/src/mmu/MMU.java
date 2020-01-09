@@ -63,6 +63,10 @@ public class MMU {
 
 	}
 	
+	public short getSegment(int number) {
+		
+	}
+	
 	//public double[] getRegisters() {																								//!
 
 	//}
