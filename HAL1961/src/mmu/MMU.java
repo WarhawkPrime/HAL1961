@@ -16,18 +16,18 @@ public class MMU {
 	private VirtualStorage vm;
 	private PageTable pageTable;
 
-	private short pageReg0;
-	private short pageReg1;
-	private short pageReg2;
-	private short pageReg3;
+	private float pageReg0;
+	private float pageReg1;
+	private float pageReg2;
+	private float pageReg3;
 	
 	//dies ist ein test
 	//trest2thth
 	//kjbflkiubsg
-	private short register0;			          
-	private short register1;			
-	private short register2;			                                             
-	private short register3;
+	private float register0;			          
+	private float register1;			
+	private float register2;			                                             
+	private float register3;
 
 	/*
 	private short register4;			          
@@ -46,18 +46,16 @@ public class MMU {
 	private short register15;
 	*/
 
-	private short[] programStorage;
+	private float[] programStorage;
 
 	public ArrayList<Commandline> commandlinesInMemory = null;
 	ArrayList<String> tempcommandLines = new ArrayList<>();
 	boolean debugMode = false;
 	Scanner scanner = null;
- 
 	
 	public MMU() {
 		commandlinesInMemory = new ArrayList<Commandline>();
 	}
-
 	
 	public int getRegisterNumber(int elementNumber) {																								//!
 
@@ -82,10 +80,10 @@ public class MMU {
 	public void setAkku(double akkuContent) {this.akk = akkuContent;}
 	public void setPc(int pcContent) {this.pc = pcContent;}
 
-	public short[] getProgramStorage() {
+	public float[] getProgramStorage() {
 		return programStorage;
 	}
-	public void setProgramStorage(short[] programStorage) {
+	public void setProgramStorage(float[] programStorage) {
 		this.programStorage = programStorage;
 	}
 
@@ -111,7 +109,7 @@ public class MMU {
 		//commandline objekte erstellt und in Array gepackt
 		createCommandLines();
 		
-		convertCommandlinesToShortArray();	//gibt das shortarray zurück
+		convertCommandlinesToFloatArray();	//gibt das shortarray zurück
 
 		//interpretHatProgramm durchgehen, auf Start warten und dann nacheinander die Schritte abarbeiten, debug mode nicht vergessen
 		interpretHalProgram(scanner);
@@ -309,17 +307,17 @@ public class MMU {
 	}
 
 
-	public short[] convertCommandlinesToShortArray() {
+	public float[] convertCommandlinesToFloatArray() {
 
 		int arraySize = commandlinesInMemory.size();
-		short [] commands = new short[arraySize];
+		float [] commands = new float[arraySize];
 
 
 
 		for(int i = 0; i < commandlinesInMemory.size(); i++) {
 
-			short sc;
-			short parac;
+			float sc;
+			float parac;
 			
 			double mod = Math.pow(10, 11);
 
@@ -327,123 +325,125 @@ public class MMU {
 
 			case("START"):  
 				sc = 00000;
-			parac = (short) commandlinesInMemory.get(i).getCommandParameter();
-			commands[i] = (short) ( (sc*mod) + parac); 
+			parac = (float) commandlinesInMemory.get(i).getCommandParameter();
+			
+			
+			commands[i] = (float) ( (sc*mod) + parac); 
 			break;
 			case("STOP"):
 				sc = 00001;
-			parac = (short) commandlinesInMemory.get(i).getCommandParameter();
-			commands[i] = (short) ((sc*mod) + parac); 
+			parac = (float) commandlinesInMemory.get(i).getCommandParameter();
+			commands[i] = (float) ((sc*mod) + parac); 
 			break;
 			case("OUT"):
 				sc = 00010;
-			parac = (short) commandlinesInMemory.get(i).getCommandParameter();
-			commands[i] = (short) ((sc*mod) + parac); 
+			parac = (float) commandlinesInMemory.get(i).getCommandParameter();
+			commands[i] = (float) ((sc*mod) + parac); 
 				break;
 			case("IN"):
 				sc = 00011;
-			parac = (short) commandlinesInMemory.get(i).getCommandParameter();
-			commands[i] = (short) ((sc*mod) + parac); 
+			parac = (float) commandlinesInMemory.get(i).getCommandParameter();
+			commands[i] = (float) ((sc*mod) + parac); 
 				break;
 			case("LOAD"):
 				sc = 00100;
-			parac = (short) commandlinesInMemory.get(i).getCommandParameter();
-			commands[i] = (short) ((sc*mod) + parac); 
+			parac = (float) commandlinesInMemory.get(i).getCommandParameter();
+			commands[i] = (float) ((sc*mod) + parac); 
 				break;
 			case("LOADNUM"):
 				sc = 00101;
-			parac = (short) commandlinesInMemory.get(i).getCommandParameter();
-			commands[i] = (short) ((sc*mod) + parac); 
+			parac = (float) commandlinesInMemory.get(i).getCommandParameter();
+			commands[i] = (float) ((sc*mod) + parac); 
 				break;
 			case("STORE"):
 				sc = 00110;
-			parac = (short) commandlinesInMemory.get(i).getCommandParameter();
-			commands[i] = (short) ((sc*mod) + parac); 
+			parac = (float) commandlinesInMemory.get(i).getCommandParameter();
+			commands[i] = (float) ((sc*mod) + parac); 
 				break;
 			case("JUMPNEG"):
 				sc = 00111;
-			parac = (short) commandlinesInMemory.get(i).getCommandParameter();
-			commands[i] = (short) ((sc*mod) + parac); 
+			parac = (float) commandlinesInMemory.get(i).getCommandParameter();
+			commands[i] = (float) ((sc*mod) + parac); 
 				break;
 			case("JUMPPOS"):
 				sc = 01000;
-			parac = (short) commandlinesInMemory.get(i).getCommandParameter();
-			commands[i] = (short) ((sc*mod) + parac); 
+			parac = (float) commandlinesInMemory.get(i).getCommandParameter();
+			commands[i] = (float) ((sc*mod) + parac); 
 				break;
 			case("JUMPNULL"):
 				sc = 01001;
-			parac = (short) commandlinesInMemory.get(i).getCommandParameter();
-			commands[i] = (short) ((sc*mod) + parac); 
+			parac = (float) commandlinesInMemory.get(i).getCommandParameter();
+			commands[i] = (float) ((sc*mod) + parac); 
 				break;
 			case("JUMP"):
 				sc = 01010;
-			parac = (short) commandlinesInMemory.get(i).getCommandParameter();
-			commands[i] = (short) ((sc*mod) + parac); 
+			parac = (float) commandlinesInMemory.get(i).getCommandParameter();
+			commands[i] = (float) ((sc*mod) + parac); 
 				break;
 			case("ADD"):
 				sc = 01011;
-			parac = (short) commandlinesInMemory.get(i).getCommandParameter();
-			commands[i] = (short) ((sc*mod) + parac); 
+			parac = (float) commandlinesInMemory.get(i).getCommandParameter();
+			commands[i] = (float) ((sc*mod) + parac); 
 				break;
 			case("ADDNUM"):
 				sc = 01100;
-			parac = (short) commandlinesInMemory.get(i).getCommandParameter();
-			commands[i] = (short) ((sc*mod) + parac); 
+			parac = (float) commandlinesInMemory.get(i).getCommandParameter();
+			commands[i] = (float) ((sc*mod) + parac); 
 				break;
 			case("SUB"):
 				sc = 01101;
-			parac = (short) commandlinesInMemory.get(i).getCommandParameter();
-			commands[i] = (short) ((sc*mod) + parac); 
+			parac = (float) commandlinesInMemory.get(i).getCommandParameter();
+			commands[i] = (float) ((sc*mod) + parac); 
 				break;
 			case("MUL"):
 				sc = 01110;
-			parac = (short) commandlinesInMemory.get(i).getCommandParameter();
-			commands[i] = (short) ((sc*mod) + parac); 
+			parac = (float) commandlinesInMemory.get(i).getCommandParameter();
+			commands[i] = (float) ((sc*mod) + parac); 
 				break;
 			case("DIV"):
 				sc = 01111;
-			parac = (short) commandlinesInMemory.get(i).getCommandParameter();
-			commands[i] = (short) ((sc*mod) + parac); 
+			parac = (float) commandlinesInMemory.get(i).getCommandParameter();
+			commands[i] = (float) ((sc*mod) + parac); 
 				break;
 			case("SUBNUM"):
 				sc = 10000;
-			parac = (short) commandlinesInMemory.get(i).getCommandParameter();
-			commands[i] = (short) ((sc*mod) + parac); 
+			parac = (float) commandlinesInMemory.get(i).getCommandParameter();
+			commands[i] = (float) ((sc*mod) + parac); 
 				break;
 			case("MULNUM"):
 				sc = 10001;
-			parac = (short) commandlinesInMemory.get(i).getCommandParameter();
-			commands[i] = (short) ((sc*mod) + parac); 
+			parac = (float) commandlinesInMemory.get(i).getCommandParameter();
+			commands[i] = (float) ((sc*mod) + parac); 
 				break;
 			case("DIVNUM"):
 				sc = 10010;
-			parac = (short) commandlinesInMemory.get(i).getCommandParameter();
-			commands[i] = (short) ((sc*mod) + parac); 
+			parac = (float) commandlinesInMemory.get(i).getCommandParameter();
+			commands[i] = (float) ((sc*mod) + parac); 
 				break;
 			case("LOADIND"):
 				sc = 10011;
-			parac = (short) commandlinesInMemory.get(i).getCommandParameter();
-			commands[i] = (short) ((sc*mod) + parac); 
+			parac = (float) commandlinesInMemory.get(i).getCommandParameter();
+			commands[i] = (float) ((sc*mod) + parac); 
 				break;
 			case("STOREIND"):
 				sc = 10100;
-			parac = (short) commandlinesInMemory.get(i).getCommandParameter();
-			commands[i] = (short) ((sc*mod) + parac); 
+			parac = (float) commandlinesInMemory.get(i).getCommandParameter();
+			commands[i] = (float) ((sc*mod) + parac); 
 				break;
 			case("DUMPREG"):
 				sc = 10101;
-			parac = (short) commandlinesInMemory.get(i).getCommandParameter();
-			commands[i] = (short) ((sc*mod) + parac); 
+			parac = (float) commandlinesInMemory.get(i).getCommandParameter();
+			commands[i] = (float) ((sc*mod) + parac); 
 				break;
 			case("DUMPPROG"):
 				sc = 10110;
-			parac = (short) commandlinesInMemory.get(i).getCommandParameter();
-			commands[i] = (short) ((sc*mod) + parac); 
+			parac = (float) commandlinesInMemory.get(i).getCommandParameter();
+			commands[i] = (float) ((sc*mod) + parac); 
 				break;
 			case("ADDIND"):
 				sc = 10111;
-			parac = (short) commandlinesInMemory.get(i).getCommandParameter();
-			commands[i] = (short) ((sc*mod) + parac); 
+			parac = (float) commandlinesInMemory.get(i).getCommandParameter();
+			commands[i] = (float) ((sc*mod) + parac); 
 				break;
 			default:
 
@@ -453,7 +453,7 @@ public class MMU {
 		this.setProgramStorage(commands);
 		return commands;
 	}
-
+	
 	
 	//cleansedLineCommands durchgehen, auf Start warten und dann nacheinander die Schritte abarbeiten, debug mode nicht vergessen
 	/**
@@ -470,10 +470,9 @@ public class MMU {
 		
 		for(int i = 0; i < this.getProgramStorage().length; i++) {
 		
-			short temp = this.getProgramStorage()[i];
-			short para = calcPara(temp);
-			short comm = calcCommand(temp); 
-			
+			float temp = this.getProgramStorage()[i];
+			int comm = calcCommand(temp); 
+			float para = calcPara(temp, comm);			
 			
 			if( comm == 00000 || foundStart ) {
 			
@@ -501,36 +500,51 @@ public class MMU {
 		return false;
 	}
 
-	public short calcPara(short line) {
-		short para = 0;
-		int modifier = 1;
+	
+	
+	public short calcCommand(float line) {
+		double temp = line;
+		short comm = 0;
+		double mod = Math.pow(10,-11 );
+		//short temp = (short) line;
 		
-	    while(line > 11) {
-	        int i = (line % 10);
-	        line /= 10;
-	        para = (short) (para + (i * modifier));
-	        modifier = modifier * 10;
-	    }
+		if(findPointPosition(line) == -1) {
+			comm = (short) (temp * mod);
+		}
+		else {
+			int i = findPointPosition(line);
+			int modpara = 11 - i;
+			mod = Math.pow(10, -modpara );
+			comm = (short) (temp * mod);
+		}
+		
+	   return comm;
+	}
+	
+	public float calcPara(float line, int command) {
+		float para = 0;
+		float tempLine = line;
+		double mod = Math.pow(10,11 );
+
+		int comm = (int) (command * mod);
+		
+		para = tempLine - comm;
 	    
 	   return para;
 	}
 	
-	public short calcCommand(short line) {
-		short comm = 0;
-		int modifier = 1;
+
+	public int findPointPosition(float line) {
+		String str2 = Float.toString(line);
 		
-	    while(line > 0) {
-	        int i = (line % 10);
-	        line /= 10;
-	        comm = (short) (comm + (i * modifier));
-	        modifier = modifier * 10;
-	    }
-	    
-	   return comm;
+		for(int i = 0; i < str2.length(); i++) {
+			if(str2.charAt(i) == '.') {
+				return i;
+			}
+		}
+		return -1;
 	}
 	
-
-
 
 	//Fuehrt den uebergebenen Befehl aus
 	/**
@@ -538,16 +552,16 @@ public class MMU {
 	 * @param commandline
 	 * @return
 	 */
-	public int executeCommand(short command, short para,  Scanner scanner, int pcCounter) {
+	public int executeCommand(int command, float para,  Scanner scanner, int pcCounter) {
 
 		int commandlineNumber = pcCounter;
-		short commandName = command; 
-		short commandPara = para;
+		int commandName = command; 
+		float commandPara = para;
 
 		Instruktionssatz instructions = null;
 
 		int registerNumber;
-		double registerContent;
+		float registerContent;
 		double akkuTemp;
 
 		
