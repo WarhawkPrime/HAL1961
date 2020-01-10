@@ -14,7 +14,7 @@ import java.util.concurrent.ThreadLocalRandom;
 
 public class MMU {
 
-	public double akk;
+	public float akk;
 	public int pc;
 	private VirtualStorage vm;
 	private PageTable pageTable;
@@ -180,11 +180,11 @@ public class MMU {
 	
 	//========== Getter ==========
 	public boolean getDebugMode() {return debugMode;}
-	public double getAkku() {return akk;}
+	public float getAkku() {return akk;}
 	public int getPc() {return pc;}
 	public ArrayList<Commandline> getCommandlinesInMemory() {return commandlinesInMemory;}
 	//========== Setter ==========
-	public void setAkku(double akkuContent) {this.akk = akkuContent;}
+	public void setAkku(float akkuContent) {this.akk = akkuContent;}
 	public void setPc(int pcContent) {this.pc = pcContent;}
 
 	public float[] getProgramStorage() {
@@ -364,7 +364,7 @@ public class MMU {
 			if(testParaForRegister(commandlinesInMemory.get(i).getCommandName()) == true) { //ist der Parameter ein Register?
 
 				int currentRegister = (int) commandlinesInMemory.get(i).getCommandParameter();	//umwandeln von float zu int
-				System.out.println("Register " + commandlinesInMemory.get(i).getCommandParameter() + " : " + getRegisterNumber(currentRegister) );	//registerausgabe mit inhalt
+				System.out.println("Register " + commandlinesInMemory.get(i).getCommandParameter() + " : " + getSegment(currentRegister));	//registerausgabe mit inhalt
 			}
 			//Hier eine ähnliche abfrage ob der Akku gebraucht wird!!!
 			if(testParaForAkku(commandlinesInMemory.get(i).getCommandName()) == true) {	//ist der Parameter der akku?
