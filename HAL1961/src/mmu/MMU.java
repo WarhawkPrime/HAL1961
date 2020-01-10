@@ -669,7 +669,7 @@ public class MMU {
 
 		int registerNumber;
 		float registerContent;
-		double akkuTemp;
+		float akkuTemp;
 
 		
 		
@@ -704,7 +704,7 @@ public class MMU {
 
 
 		//Schnittstelle s
-		double s = 0;
+		float s = 0;
 
 		switch(commandName) {
 
