@@ -6,8 +6,11 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.LinkedList;
+import java.util.Queue;
 import java.util.Scanner;
+import java.util.concurrent.ThreadLocalRandom;
 
 public class MMU {
 
@@ -15,39 +18,7 @@ public class MMU {
 	public int pc;
 	private VirtualStorage vm;
 	private PageTable pageTable;
-
-	private float pageReg0;
-	private float pageReg1;
-	private float pageReg2;
-	private float pageReg3;
-	
 	private short[] regs;
-	
-	//dies ist ein test
-	//trest2thth
-	//kjbflkiubsg
-	private float register0;			          
-	private float register1;			
-	private float register2;			                                             
-	private float register3;
-
-	/*
-	private short register4;			          
-	private short register5;			
-	private short register6;			                                             
-	private short register7;
-
-	private short register8;
-	private short register9;
-	private short register10;
-	private short register11;
-
-	private short register12;
-	private short register13;
-	private short register14;			                                             
-	private short register15;
-	*/
-
 	private float[] programStorage;
 
 	public ArrayList<Commandline> commandlinesInMemory = null;
@@ -70,68 +41,133 @@ public class MMU {
 		}
 	}
 	
-	// Return segment data and handle page faults 
-	public float getSegment(int address) {
+	// Set segment data and handle page faults
+	public boolean setSegment(int address, float value) {
 		
-		float f; 
 		short index = pageTable.getIndexFromAddress(address);
-		PageTableEntry entry;
+		if(pageTable.createPageTableEntry(index))
+			lf.logInfo("Created new PageTableEntry with index " + index);
+
+		PageTableEntry p = pageTable.getPageEntryByIndex(index);
 		
-		// Check if address index exists in regs
+		
 		for (int i = 0; i < regs.length; i++) {
 			
 			if(regs[i] == index) {
-				entry = pageTable.getPageEntryByIndex(index); // WARNING!! Possible error, call to function that expects PageEntry to already exist at index, might not be the case!
-				entry.setPresentBit(true);
-				//entry.setReferencedBit(true);
-				return pageTable.resolveValueAtAddress(address);
-			}
-			else if (regs[i] != index) {
 				
-				continue;
+				p.setReferencedBit(true);
+				return pageTable.setValueAtAddress(address, value);
 			}
-			else {
+			else if(regs[i] == -1) {
+				
 				regs[i] = index;
-				entry = pageTable.getPageEntryByIndex(index);
-				entry.setPresentBit(true);
-				//entry.setReferencedBit(true);
-				
-				return pageTable.resolveValueAtAddress(address);
-				
+				p.setPresentBit(true);
+				p.setReferencedBit(true);
+				return pageTable.setValueAtAddress(address, value);
 			}
 		}
-		
 		
 		// Page fault occured if execution continues here
 		throwPageFault(index);
+		secondChance(index, address);
+		return pageTable.setValueAtAddress(address, value);
 		
-		//----
-		PageTableEntry pte = null;;
-		PageTableEntry temp = null;
+	}
+	
+	
+	// Return segment data and handle page faults 
+	public float getSegment(int address) {
+		
+		short index = pageTable.getIndexFromAddress(address);
+		if(pageTable.createPageTableEntry(index))
+			lf.logInfo("Created new PageTableEntry with index " + index);
+
+		PageTableEntry p = pageTable.getPageEntryByIndex(index);
+		
 		
 		for (int i = 0; i < regs.length; i++) {
-			pte = pageTable.getPageEntryByIndex(regs[i]);
 			
-			if(pte.isReferenced()) {
-				continue;
+			if(regs[i] == index) {
+				
+				p.setReferencedBit(true);
+				return pageTable.resolveValueAtAddress(address);
 			}
-			else {
-				temp = pageTable.getPageEntryByIndex(index);
-				temp.setPresentBit(true);
-				//temp.setReferencedBit(true); -- Only need to set referenced bit when read or write to address is detected, on load there might not be one?
+			else if(regs[i] == -1) {
+				
 				regs[i] = index;
-				pte.setPresentBit(false);
-				pte.setReferencedBit(false);
+				p.setPresentBit(true);
+				p.setReferencedBit(true);
 				return pageTable.resolveValueAtAddress(address);
 			}
 		}
 		
-		temp = pageTable.getPageEntryByIndex(index);
-		temp.setPresentBit(true);
-		//temp.setReferencedBit(true); -- Only need to set referenced bit when read or write to address is detected, on load there might not be one?
-		regs[0] = index;
-		pte.setPresentBit(false);
-		pte.setReferencedBit(false);
+		// Page fault occured if execution continues here
+		throwPageFault(index);
+		secondChance(index, address);
+		//Page Fault has been handled, return value at address
+		return pageTable.resolveValueAtAddress(address);
+		
+	}
+	
+	private LinkedList<Short> getListFromArray(short[] array){
+		
+		LinkedList<Short> temp = new LinkedList<>();
+		for (int i = 0; i < array.length; i++) {
+			temp.add(array[i]);
+		}
+		return temp;
+	}
+	
+	private short[] getArrayFromList(LinkedList<Short> list) {
+		
+		short[] temp = new short[4];
+		for (int i = 0; i < 4; i++) {
+			temp[i] = list.get(i);
+		}
+		return temp;
+	}
+	
+	
+	// Run replacement algorithm to replace it in registers
+	private void secondChance(short index, int address) {
+		
+		PageTableEntry entry, temp;
+		LinkedList<Short> list = getListFromArray(regs);
+		
+		for (int i = 0; i < list.size(); i++) {
+			
+			entry = pageTable.getPageEntryByIndex(list.get(i));
+			
+			if(entry.isReferenced()) {
+				short s = list.remove(0);
+				temp = pageTable.getPageEntryByIndex(s);
+				temp.setReferencedBit(false);
+				list.addLast(s);
+			}
+			else {
+				short s = list.set(0, index);
+				temp = pageTable.getPageEntryByIndex(s);
+				temp.setPresentBit(false);
+			}
+		}
+		
+		regs = getArrayFromList(list);
+		
+
+		
+		
+	}
+	
+	private float randomReplacement(short index, int address) {
+		
+		PageTableEntry entry, temp;
+		LinkedList<Short> list = getListFromArray(regs);
+		
+		int i = ThreadLocalRandom.current().nextInt(0,4);
+		
+		list.set(i, index);
+		
+		regs = getArrayFromList(list);
 		return pageTable.resolveValueAtAddress(address);
 		
 	}
@@ -141,38 +177,6 @@ public class MMU {
 		String temp = "Page Fault No. " + this.counter + "! Requested Page " + index;
 		this.lf.logInfo(temp);
 	}
-	
-	// Get page from memory
-	private Page loadMissingPage(int index) {
-		
-		Page p = this.vm.getPage(index);
-		return p;
-	}
-
-	
-	// Run replacement algorithm to replace it in registers
-	private void runAlgorithm() {
-		
-	}
-	
-	
-	private Page accessPageTableWithIndex(int index) {
-		
-		Page p;
-		 
-		if(index >= entries.size()) {
-			
-			// Page isnt loaded in memory, throw PageFault and load missing Page from VirtualStorage
-			p = loadMissingPage(index);
-			return p;
-		}
-		else {
-			
-				return p;
-			
-		}
-	}
-	
 	
 	//========== Getter ==========
 	public boolean getDebugMode() {return debugMode;}
@@ -743,7 +747,7 @@ public class MMU {
 		case(00100):	//LOAD r
 
 		registerNumber = (int) commandPara;
-		registerContent = getRegisters()[registerNumber];
+		registerContent = getSegment(registerNumber);
 		setAkku(registerContent);
 		return pcCounter +=1;
 
@@ -757,8 +761,8 @@ public class MMU {
 		case(00110):	//STORE r
 
 			registerNumber = (int) commandPara;
-		double akkuContent = getAkku();
-		getRegisters()[registerNumber] = akkuContent; 
+		float akkuContent = getAkku();
+		setSegment(registerNumber, akkuContent); 
 		return pcCounter +=1;
 
 		//break;
@@ -802,7 +806,7 @@ public class MMU {
 			//(a = a + r)
 			registerNumber = (int) commandPara;
 
-		registerContent = getRegisters()[registerNumber];
+		registerContent = getSegment(registerNumber);
 
 
 		akkuTemp = getAkku() + registerContent;
@@ -822,7 +826,7 @@ public class MMU {
 
 			//(a = a - r)
 			registerNumber = (int) commandPara;
-		registerContent = getRegisters()[registerNumber];
+		registerContent = getSegment(registerNumber);
 		akkuTemp =getAkku() - registerContent;
 		setAkku(akkuTemp);
 
@@ -832,7 +836,7 @@ public class MMU {
 
 			//(a = a * r)
 			registerNumber = (int) commandPara;
-		registerContent = getRegisters()[registerNumber];
+		registerContent = getSegment(registerNumber);
 		akkuTemp =getAkku() * registerContent;
 		setAkku(akkuTemp);
 
@@ -842,7 +846,7 @@ public class MMU {
 
 			//(a = a / r)
 			registerNumber = (int) commandPara;
-		registerContent = getRegisters()[registerNumber];
+		registerContent = getSegment(registerNumber);
 		akkuTemp =getAkku() / registerContent;
 		setAkku(akkuTemp);
 
