@@ -13,7 +13,8 @@ public class VirtualStorage {
 	private void createPages() {	//erstellt 64 pages mit entsprechender nummer
 		
 		if(this.pages == null) {
-			for(int i = 0; i < 64; i++) {
+			pages = new ArrayList<Page>();
+			for(int i = 0; i < 63; i++) {
 				Page page = new Page(i);
 				pages.add(page);
 			}

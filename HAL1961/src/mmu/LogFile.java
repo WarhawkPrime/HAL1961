@@ -16,6 +16,7 @@ public class LogFile {
 
 	        // Configures the logger with handler and formatter  
 	        fh = new FileHandler("BSP5.log");  
+	        //logFile = new Logger("Logger");
 	        logFile.addHandler(fh);
 	        SimpleFormatter formatter = new SimpleFormatter();  
 	        fh.setFormatter(formatter);  
