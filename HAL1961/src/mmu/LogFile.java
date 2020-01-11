@@ -13,7 +13,8 @@ public class LogFile {
 	public LogFile() {
 		
 		try {  
-
+			
+			logFile = Logger.getLogger("Betriebssysteme P5");
 	        // Configures the logger with handler and formatter  
 	        fh = new FileHandler("BSP5.log");  
 	        //logFile = new Logger("Logger");
