@@ -19,7 +19,7 @@ public class MMU {
 	private VirtualStorage vm;
 	private PageTable pageTable;
 	private short[] regs;
-	private float[] programStorage;
+	//private float[] programStorage;
 
 	public ArrayList<Commandline> commandlinesInMemory = null;
 	ArrayList<String> tempcommandLines = new ArrayList<>();
@@ -187,11 +187,11 @@ public class MMU {
 	public void setAkku(float akkuContent) {this.akk = akkuContent;}
 	public void setPc(int pcContent) {this.pc = pcContent;}
 
-	public float[] getProgramStorage() {
-		return programStorage;
+	public ArrayList<Commandline>  getProgramStorage() {
+		return commandlinesInMemory;
 	}
-	public void setProgramStorage(float[] programStorage) {
-		this.programStorage = programStorage;
+	public void setProgramStorage(ArrayList<Commandline> programStorage) {
+		this.commandlinesInMemory = programStorage;
 	}
 
 
@@ -216,7 +216,7 @@ public class MMU {
 		//commandline objekte erstellt und in Array gepackt
 		createCommandLines();
 		
-	    this.setProgramStorage(convertCommandlinesToFloatArray());	//gibt das shortarray zurück
+	    //setProgramStorage(convertCommandlinesToFloatArray());	//gibt das shortarray zurück
 
 		//interpretHatProgramm durchgehen, auf Start warten und dann nacheinander die Schritte abarbeiten, debug mode nicht vergessen
 		interpretHalProgram(scanner);
@@ -342,10 +342,6 @@ public class MMU {
 	}
 
 
-
-
-
-
 	//was soll ausgegeben werden wenn der Debug modus an ist?
 	/**
 	 * 
@@ -353,7 +349,27 @@ public class MMU {
 	 */
 	public void showsDebugMode(int i) {
 
-
+		for(Commandline c : commandlinesInMemory) {
+			if(c.getCommandLineNumber() == i) {
+			
+				if(c.getCommandName().equals("START") || c.getCommandName().equals("STOP")) {
+					System.out.println("Befehl: " + c.getCommandName());
+				}
+				else {
+					System.out.println("Befehl:" + " " + c.getCommandName() + " " + c.getCommandParameter());
+				
+					if( testParaForRegister(c.getCommandName()) == true) {
+						int currentRegister = (int) c.getCommandParameter();
+						System.out.println("Register: " + c.getCommandParameter() + " : " + getSegment(currentRegister));
+					}
+					System.out.println("Akku: " + getAkku());
+					System.out.println("PC: " + getPc() );
+				}
+			}
+		}
+		
+		
+		/*
 		if(commandlinesInMemory.get(i).getCommandName().equals("START") || commandlinesInMemory.get(i).getCommandName().equals("STOP")) {
 			System.out.println("Befehl: " + commandlinesInMemory.get(i).getCommandName());	//Welcher Befehl?
 		}
@@ -373,6 +389,7 @@ public class MMU {
 
 			}
 		}
+		*/
 
 	}
 
@@ -385,7 +402,7 @@ public class MMU {
 	 */
 	public boolean testParaForRegister(String commandName) {
 		boolean isRegister = false;
-		if(commandName.equals("LOAD") || commandName.equals("STORE") ) {
+		if(commandName.equals("LOAD") || commandName.equals("STORE") || commandName.equals("LOADIND") || commandName.equals("STOREIND") ) {
 			isRegister = true;
 		}
 		else {
@@ -414,6 +431,8 @@ public class MMU {
 	}
 
 
+	/*
+	
 	public float[] convertCommandlinesToFloatArray() {
 
 		int arraySize = commandlinesInMemory.size();
@@ -557,6 +576,7 @@ public class MMU {
 		return commands;
 	}
 	
+	*/
 	
 	//cleansedLineCommands durchgehen, auf Start warten und dann nacheinander die Schritte abarbeiten, debug mode nicht vergessen
 	/**
@@ -571,18 +591,22 @@ public class MMU {
 		
 		boolean foundStart = false;
 		
-		for(int i = 0; i < this.getProgramStorage().length; i++) {
+		for(int i = 0; i < commandlinesInMemory.size() ; i++) {
 		
-			float temp = this.getProgramStorage()[i];
-			int comm = calcCommand(temp); 
-			float para = calcPara(temp, comm);			
+			//float temp = this.getProgramStorage().get(i).get ;
+			String comm = commandlinesInMemory.get(i).getCommandName();
+			float para = (float) commandlinesInMemory.get(i).getCommandParameter();
+			//int comm = calcCommand(temp); 
+			//float para = calcPara(temp, comm);
+			//String test = comm;
 			
-			if( comm == 00000 || foundStart ) {
+			if( comm.contentEquals("START") || foundStart == true ) {
 			
 				foundStart = true;
 				
 				if(debugMode == true) {	//ist der debugModus angeschaltet?
-					//showsDebugMode(pcCounter);
+					System.out.println(" ");
+					showsDebugMode( commandlinesInMemory.get(pc).getCommandLineNumber() );
 				}
 		
 				this.setPc(executeCommand(comm, para, scanner, this.getPc()));
@@ -593,7 +617,8 @@ public class MMU {
 				}
 
 				if(debugMode == true) {	//ist der debugModus angeschaltet?
-					//showsDebugMode(pc - 1);
+					showsDebugMode(commandlinesInMemory.get(pc).getCommandLineNumber() -1);
+					System.out.println(" ");
 				}
 			}
 			else {
@@ -655,10 +680,10 @@ public class MMU {
 	 * @param commandline
 	 * @return
 	 */
-	public int executeCommand(int command, float para,  Scanner scanner, int pcCounter) {
+	public int executeCommand(String command, float para,  Scanner scanner, int pcCounter) {
 
 		int commandlineNumber = pcCounter;
-		int commandName = command; 
+		String commandName = command; 
 		float commandPara = para;
 
 		Instruktionssatz instructions = null;
@@ -706,20 +731,20 @@ public class MMU {
 
 		switch(commandName) {
 
-		case(00000):  //start
+		case("START"):  //start 00000
 
 			return pcCounter += 1;
 		
-		case(00001): //STOP
+		case("STOP"): //STOP 00001
 
 			return pcCounter = -1;
 		
-		case(00010): //OUT s
+		case("OUT"): //OUT s 00010
 			s = getAkku();
 			System.out.println(s);
 		return pcCounter +=1;
 
-		case(00011):	//IN s
+		case("IN"):	//IN s 00011
 			Scanner scanner1ea = new Scanner(System.in);
 			scanner1ea.useDelimiter(System.lineSeparator());
 			System.out.println("float Input to write in Akkumulator : ");
@@ -729,121 +754,122 @@ public class MMU {
 			setAkku(s);
 		return pcCounter +=1;
 
-		case(00100):	//LOAD r
+		case("LOAD"):	//LOAD r 00100
 			registerNumber = (int) commandPara;
 			registerContent = getSegment(registerNumber);
 			setAkku(registerContent);
 		return pcCounter +=1;
 
-		case(00101):	//LOADNUM	k
+		case("LOADNUM"):	//LOADNUM	k 00101
 			setAkku(commandPara);
 		return pcCounter +=1;
 
-		case(00110):	//STORE r
+		case("STORE"):	//STORE r 00110
 			registerNumber = (int) commandPara;
 			akkuContent = getAkku();
 			setSegment(registerNumber, akkuContent); 
 		return pcCounter +=1;
 
-		case(00111):	//JUMPNEG a
+		case("JUMPNEG"):	//JUMPNEG a 00111
 			if(getAkku() < 0) {
 				int tempPcPosition = (int) commandPara;
 				return pcCounter = tempPcPosition;
 			}
 		return pcCounter +=1;
 
-		case(01000):	//JUMPPOS a
+		case("JUMPPOS"):	//JUMPPOS a 01000
 			if(getAkku() > 0) {
 				int tempPcPosition = (int) commandPara;
 				return pcCounter = tempPcPosition;
 			}
 		return pcCounter +=1;
 		
-		case(01001):	//JUMPNULL
+		case("JUMPNULL"):	//JUMPNULL 01001
 			if(getAkku() == 0) {
 				int tempPcPosition = (int) commandPara;
 				return pcCounter = tempPcPosition;
 			}
 		return pcCounter +=1;
 
-		case(01010):	//JUMP
+		case("JUMP"):	//JUMP 01010
 			int tempPcPosition = (int) commandPara;
 		return pcCounter = tempPcPosition;
 
-		case(01011):	//ADD r
+		case("ADD"):	//ADD r 01011
 			registerNumber = (int) commandPara;
 			registerContent = getSegment(registerNumber);
 			akkuTemp = getAkku() + registerContent;
 			setAkku(akkuTemp);
 		return pcCounter +=1;
 
-		case(01100): 	//ADDNUM k
+		case("ADDNUM"): 	//ADDNUM k 01100
 			akkuTemp = commandPara + getAkku();
 			setAkku(akkuTemp);
 		return pcCounter +=1;
 
-		case(01101):	//SUB r
+		case("SUB"):	//SUB r 01101
 			registerNumber = (int) commandPara;
 			registerContent = getSegment(registerNumber);
 			akkuTemp =getAkku() - registerContent;
 			setAkku(akkuTemp);
 		return pcCounter +=1;
 		
-		case(01110):	//MUL a
+		case("MUL"):	//MUL a 01110
 			registerNumber = (int) commandPara;
 			registerContent = getSegment(registerNumber);
 			akkuTemp =getAkku() * registerContent;
 			setAkku(akkuTemp);
 		return pcCounter +=1;
 		
-		case(01111):	//DIV a
+		case("DIV"):	//DIV a 01111
 			registerNumber = (int) commandPara;
 			registerContent = getSegment(registerNumber);
 			akkuTemp =getAkku() / registerContent;
 			setAkku(akkuTemp);
 		return pcCounter +=1;
 
-		case(10000):	//SUBNUM a
+		case("SUBNUM"):	//SUBNUM a 10000
 			akkuTemp = getAkku() - commandPara;
 			setAkku(akkuTemp);
 		return pcCounter +=1;
 		
-		case(10001):	//MULNUM a
+		case("MULNUM"):	//MULNUM a 10001
 			akkuTemp = getAkku() * commandPara;
 			setAkku(akkuTemp);
 		return pcCounter +=1;
 		
-		case(10010):	//DIVNUM a
+		case("DIVNUM"):	//DIVNUM a 10010
 			akkuTemp = getAkku() - commandPara;
 			setAkku(akkuTemp);
 		return pcCounter +=1;
 		
-		case(10011):	//LOADIND r
+		case("LOADIND"):	//LOADIND r 10011
 			registerNumber = (int) commandPara;
 	    	segmentAdress = (int) getSegment(registerNumber); 
 	    	setAkku(getSegment(segmentAdress));
 		return pcCounter +=1;
 		
-		case(10100):	//STOREIND r
+		case("STOREIND"):	//STOREIND r 10100
 			registerNumber = (int) commandPara;
 		    akkuContent = getAkku();
 		    segmentAdress = (int) getSegment(registerNumber); 
 		    setSegment(segmentAdress, akkuContent); 
 		return pcCounter+=1;
 
-		case(10101):	//DUMPREG r
-			for(int i = 0; i < 65535; i++) {
-				System.out.println("Registernummer: " + i + " Registerinhalt: " + getSegment(i));
+		case("DUMPREG"):	//DUMPREG r 10101
+			//for(int i = 0; i < 65535; i++) {
+				//System.out.println("Registernummer: " + i + " Registerinhalt: " + getSegment(i));
+			//}
+			return pcCounter +=1;
+			
+		case("DUMPPROG"):	//DUMPPROG 10110
+			
+			for(int i = 0; i < commandlinesInMemory.size(); i++ ) {
+				System.out.println(commandlinesInMemory.get(i).getCommandName() + " " + commandlinesInMemory.get(i).getCommandParameter() );
 			}
 			return pcCounter +=1;
 			
-		case(10110):	//DUMPPROG
-			for(int i = 0; i < programStorage.length; i++ ) {
-				System.out.println(programStorage[i]);
-			}
-			return pcCounter +=1;
-			
-		case(10111):		//ADDIND r
+		case("ADDIND"):		//ADDIND r
 		
 			return pcCounter +=1;
 		
@@ -869,9 +895,9 @@ public class MMU {
 
 		System.out.println("Debug Mode y/n : ");
 
-		//scanner.hasNext();
-		//String inputString = scanner.nextLine();
-		String inputString = "n";
+		scanner.hasNext();
+		String inputString = scanner.nextLine();
+		//String inputString = "y";
 		//double s = Float.valueOf(inputString.trim()).floatValue();
 
 		//String inputString = scanner.nextLine();

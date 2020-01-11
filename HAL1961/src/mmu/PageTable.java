@@ -17,7 +17,6 @@ public class PageTable {
 	private LogFile log;
 	
 	
-	
 	public PageTable(VirtualStorage vmem, LogFile lf) {
 		
 		this.log = lf;
