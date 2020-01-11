@@ -216,7 +216,7 @@ public class MMU {
 		//commandline objekte erstellt und in Array gepackt
 		createCommandLines();
 		
-		convertCommandlinesToFloatArray();	//gibt das shortarray zurück
+	    this.setProgramStorage(convertCommandlinesToFloatArray());	//gibt das shortarray zurück
 
 		//interpretHatProgramm durchgehen, auf Start warten und dann nacheinander die Schritte abarbeiten, debug mode nicht vergessen
 		interpretHalProgram(scanner);
@@ -419,8 +419,6 @@ public class MMU {
 		int arraySize = commandlinesInMemory.size();
 		float [] commands = new float[arraySize];
 
-
-
 		for(int i = 0; i < commandlinesInMemory.size(); i++) {
 
 			float sc;
@@ -433,8 +431,6 @@ public class MMU {
 			case("START"):  
 				sc = 00000;
 			parac = (float) commandlinesInMemory.get(i).getCommandParameter();
-			
-			
 			commands[i] = (float) ( (sc*mod) + parac); 
 			break;
 			case("STOP"):
@@ -620,7 +616,7 @@ public class MMU {
 		}
 		else {
 			int i = findPointPosition(line);
-			int modpara = 11 - i;
+			int modpara = 11 - (17- i);
 			mod = Math.pow(10, -modpara );
 			comm = (short) (temp * mod);
 		}
@@ -670,6 +666,8 @@ public class MMU {
 		int registerNumber;
 		float registerContent;
 		float akkuTemp;
+		float akkuContent;
+		int segmentAdress;
 
 		
 		
@@ -711,203 +709,149 @@ public class MMU {
 		case(00000):  //start
 
 			return pcCounter += 1;
-
-		//break;
+		
 		case(00001): //STOP
 
 			return pcCounter = -1;
-
+		
 		case(00010): //OUT s
-
 			s = getAkku();
-
-		System.out.println(s);
+			System.out.println(s);
 		return pcCounter +=1;
 
 		case(00011):	//IN s
-
-			//eaComponentNumber = (int) commandPara;
-			//ea = getEAbyNumber(eaComponentNumber, eaComponents );
-
-			//s = ea.sendInputToHalInp();
-			//bekommt/holt sich vom ausgewähltem ea Baustein den Wert. Der ea baustein muss sich diesen wert vorher aus dem Buffer holen
-
-		Scanner scanner1ea = new Scanner(System.in);
-		scanner1ea.useDelimiter(System.lineSeparator());
-		System.out.println("float Input to write in Akkumulator : ");
-		scanner1ea.hasNext();
-		String inputString = scanner1ea.next();
-		s = Float.valueOf(inputString.trim()).floatValue();
-
-		setAkku(s);
-
+			Scanner scanner1ea = new Scanner(System.in);
+			scanner1ea.useDelimiter(System.lineSeparator());
+			System.out.println("float Input to write in Akkumulator : ");
+			scanner1ea.hasNext();
+			String inputString = scanner1ea.next();
+			s = Float.valueOf(inputString.trim()).floatValue();
+			setAkku(s);
 		return pcCounter +=1;
 
-		//break;
 		case(00100):	//LOAD r
-
-		registerNumber = (int) commandPara;
-		registerContent = getSegment(registerNumber);
-		setAkku(registerContent);
+			registerNumber = (int) commandPara;
+			registerContent = getSegment(registerNumber);
+			setAkku(registerContent);
 		return pcCounter +=1;
 
-		//break;
 		case(00101):	//LOADNUM	k
-
 			setAkku(commandPara);
 		return pcCounter +=1;
 
-		//break;
 		case(00110):	//STORE r
-
 			registerNumber = (int) commandPara;
-		float akkuContent = getAkku();
-		setSegment(registerNumber, akkuContent); 
+			akkuContent = getAkku();
+			setSegment(registerNumber, akkuContent); 
 		return pcCounter +=1;
 
-		//break;
 		case(00111):	//JUMPNEG a
-
 			if(getAkku() < 0) {
 				int tempPcPosition = (int) commandPara;
 				return pcCounter = tempPcPosition;
 			}
-
 		return pcCounter +=1;
 
-		//break;
 		case(01000):	//JUMPPOS a
-
 			if(getAkku() > 0) {
 				int tempPcPosition = (int) commandPara;
-				//int pcPos = 0 - tempPcPosition;
-				//setPc(tempPcPosition);
 				return pcCounter = tempPcPosition;
 			}
-
 		return pcCounter +=1;
-		//break;
+		
 		case(01001):	//JUMPNULL
-
 			if(getAkku() == 0) {
 				int tempPcPosition = (int) commandPara;
 				return pcCounter = tempPcPosition;
 			}
-
 		return pcCounter +=1;
-		//break;
-		case(01010):	//JUMP
 
+		case(01010):	//JUMP
 			int tempPcPosition = (int) commandPara;
 		return pcCounter = tempPcPosition;
-		//break;
+
 		case(01011):	//ADD r
-
-			//(a = a + r)
 			registerNumber = (int) commandPara;
-
-		registerContent = getSegment(registerNumber);
-
-
-		akkuTemp = getAkku() + registerContent;
-		setAkku(akkuTemp);
-
+			registerContent = getSegment(registerNumber);
+			akkuTemp = getAkku() + registerContent;
+			setAkku(akkuTemp);
 		return pcCounter +=1;
-		//break;
+
 		case(01100): 	//ADDNUM k
-
-			//(a = a + k)
 			akkuTemp = commandPara + getAkku();
-		setAkku(akkuTemp);
-
+			setAkku(akkuTemp);
 		return pcCounter +=1;
-		//break;
+
 		case(01101):	//SUB r
-
-			//(a = a - r)
 			registerNumber = (int) commandPara;
-		registerContent = getSegment(registerNumber);
-		akkuTemp =getAkku() - registerContent;
-		setAkku(akkuTemp);
-
+			registerContent = getSegment(registerNumber);
+			akkuTemp =getAkku() - registerContent;
+			setAkku(akkuTemp);
 		return pcCounter +=1;
-		//break;
+		
 		case(01110):	//MUL a
-
-			//(a = a * r)
 			registerNumber = (int) commandPara;
-		registerContent = getSegment(registerNumber);
-		akkuTemp =getAkku() * registerContent;
-		setAkku(akkuTemp);
-
+			registerContent = getSegment(registerNumber);
+			akkuTemp =getAkku() * registerContent;
+			setAkku(akkuTemp);
 		return pcCounter +=1;
-		//break;
+		
 		case(01111):	//DIV a
-
-			//(a = a / r)
 			registerNumber = (int) commandPara;
-		registerContent = getSegment(registerNumber);
-		akkuTemp =getAkku() / registerContent;
-		setAkku(akkuTemp);
-
+			registerContent = getSegment(registerNumber);
+			akkuTemp =getAkku() / registerContent;
+			setAkku(akkuTemp);
 		return pcCounter +=1;
-		//break;
+
 		case(10000):	//SUBNUM a
-
-			//(a = a - k)
 			akkuTemp = getAkku() - commandPara;
-		setAkku(akkuTemp);
-
+			setAkku(akkuTemp);
 		return pcCounter +=1;
-		//break;
+		
 		case(10001):	//MULNUM a
-
-			//(a = a * k)
 			akkuTemp = getAkku() * commandPara;
-		setAkku(akkuTemp);
-
+			setAkku(akkuTemp);
 		return pcCounter +=1;
-		//break;
+		
 		case(10010):	//DIVNUM a
-
-			//(a = a / k)
 			akkuTemp = getAkku() - commandPara;
-		setAkku(akkuTemp);
-
+			setAkku(akkuTemp);
 		return pcCounter +=1;
-		//break;
+		
 		case(10011):	//LOADIND r
 			registerNumber = (int) commandPara;
-		//lädt den Inhalt der Speicherzelle in den Accumulator, deren Adresse im Register r abgelegt ist
-
-
+	    	segmentAdress = (int) getSegment(registerNumber); 
+	    	setAkku(getSegment(segmentAdress));
 		return pcCounter +=1;
-		//break;
+		
 		case(10100):	//STOREIND r
-			
 			registerNumber = (int) commandPara;
-
-		//speichert den Inhalt des Akkus in der Speicherzelle, deren Adresse im Register r steht
-
+		    akkuContent = getAkku();
+		    segmentAdress = (int) getSegment(registerNumber); 
+		    setSegment(segmentAdress, akkuContent); 
 		return pcCounter+=1;
-		//break;
+
 		case(10101):	//DUMPREG r
-			//gibt den Ingalt aller Register über den Kanal 1 in der Form 'Registernummer: Registerinhalt' aus
-
-			return pcCounter;
-		//break;
+			for(int i = 0; i < 65535; i++) {
+				System.out.println("Registernummer: " + i + " Registerinhalt: " + getSegment(i));
+			}
+			return pcCounter +=1;
+			
 		case(10110):	//DUMPPROG
-
-			//gibt den Programmspeicher über den Kanal 2 aus
-			return pcCounter;
-		//break;
+			for(int i = 0; i < programStorage.length; i++ ) {
+				System.out.println(programStorage[i]);
+			}
+			return pcCounter +=1;
+			
 		case(10111):		//ADDIND r
 		
+			return pcCounter +=1;
 		
 		default:
 		}
 
 		return pcCounter;	//niemals!!!
+		
 	}
 
 	
@@ -938,7 +882,7 @@ public class MMU {
 		return inputString;
 
 	}
-
+	
 
 
 
