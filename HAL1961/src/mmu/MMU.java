@@ -590,12 +590,24 @@ public class MMU {
 		this.setPc(0);
 		
 		boolean foundStart = false;
+		int endModifier = 0;
 		
-		for(int i = 0; i < commandlinesInMemory.size() ; i++) {
+		/*
+		for(int i = 0; i < commandlinesInMemory.size(); i++) {
+			String comm = commandlinesInMemory.get(i).getCommandName();
+			if(comm.contentEquals("STOP")) {
+				endModifier = i;
+			}
+		}
+		*/
+		
+		
+		//int pc = this.getPc();
+		while(pc != -1) {
 		
 			//float temp = this.getProgramStorage().get(i).get ;
-			String comm = commandlinesInMemory.get(i).getCommandName();
-			float para = (float) commandlinesInMemory.get(i).getCommandParameter();
+			String comm = commandlinesInMemory.get(pc).getCommandName();
+			float para = (float) commandlinesInMemory.get(pc).getCommandParameter();
 			//int comm = calcCommand(temp); 
 			//float para = calcPara(temp, comm);
 			//String test = comm;
