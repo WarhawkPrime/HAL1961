@@ -869,16 +869,23 @@ public class MMU {
 		return pcCounter+=1;
 
 		case("DUMPREG"):	//DUMPREG r 10101
+			System.out.println();
+			for(int i =0; i < regs.length; i++) {
+				System.out.println("Register " + i + " : " + regs[i]);
+			}
+			System.out.println();
+			
 			//for(int i = 0; i < 65535; i++) {
 				//System.out.println("Registernummer: " + i + " Registerinhalt: " + getSegment(i));
 			//}
 			return pcCounter +=1;
 			
 		case("DUMPPROG"):	//DUMPPROG 10110
-			
+			System.out.println();
 			for(int i = 0; i < commandlinesInMemory.size(); i++ ) {
 				System.out.println(commandlinesInMemory.get(i).getCommandName() + " " + commandlinesInMemory.get(i).getCommandParameter() );
 			}
+			System.out.println();
 			return pcCounter +=1;
 			
 		case("ADDIND"):		//ADDIND r
