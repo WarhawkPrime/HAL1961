@@ -56,7 +56,7 @@ public class PageTable {
 		// Get highest 6 and lowest 10 bits as page table index and offset
 		index = Short.parseShort(virtualAddressString.substring(0, 6), 2);
 		offset = Short.parseShort(virtualAddressString.substring(6, 16), 2);
-		offset /= 16;
+		
 		
 		for (PageTableEntry pageTableEntry : entries) {
 			if(pageTableEntry.getIndex() == index) {
@@ -71,6 +71,8 @@ public class PageTable {
 	public boolean setValueAtAddress(int virtualAddress, float value) {
 		
 		virtualAddressString = Integer.toBinaryString(virtualAddress);
+		
+		
 		String s = "";
 		// Extend string to 16 'bit' length
 		for (int i = 0; i < (16 - virtualAddressString.length()); i++) {
@@ -81,7 +83,7 @@ public class PageTable {
 		// Get highest 6 and lowest 10 bits as page table index and offset
 		index = Short.parseShort(virtualAddressString.substring(0, 6), 2);
 		offset = Short.parseShort(virtualAddressString.substring(6, 16), 2);
-		offset /= 16;
+		
 		
 		
 		for (PageTableEntry pageTableEntry : entries) {

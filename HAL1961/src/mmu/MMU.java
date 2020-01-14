@@ -43,8 +43,8 @@ public class MMU {
 	public boolean setSegment(int address, float value) {
 		
 		short index = pageTable.getIndexFromAddress(address);
-		if(pageTable.createPageTableEntry(index))
-			lf.logInfo("Created new PageTableEntry with index " + index);
+		pageTable.createPageTableEntry(index);
+			//lf.logInfo("Created new PageTableEntry with index " + index);
 
 		PageTableEntry p = pageTable.getPageEntryByIndex(index);
 		
@@ -77,8 +77,8 @@ public class MMU {
 	public float getSegment(int address) {
 		
 		short index = pageTable.getIndexFromAddress(address);
-		if(pageTable.createPageTableEntry(index))
-			lf.logInfo("Created new PageTableEntry with index " + index);
+		pageTable.createPageTableEntry(index);
+			//lf.logInfo("Created new PageTableEntry with index " + index);
 
 		PageTableEntry p = pageTable.getPageEntryByIndex(index);
 		

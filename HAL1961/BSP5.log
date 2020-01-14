@@ -1,14 +1,36 @@
-Jan 14, 2020 2:40:50 AM mmu.LogFile logInfo
-INFO: Created new PageTableEntry with index 1
-Jan 14, 2020 2:40:54 AM mmu.LogFile logInfo
-INFO: Created new PageTableEntry with index 2
-Jan 14, 2020 2:41:00 AM mmu.LogFile logInfo
-INFO: Created new PageTableEntry with index 4
-Jan 14, 2020 2:41:00 AM mmu.LogFile logInfo
-INFO: Created new PageTableEntry with index 31
-Jan 14, 2020 2:41:00 AM mmu.LogFile logInfo
-INFO: Created new PageTableEntry with index 63
-Jan 14, 2020 2:41:00 AM mmu.LogFile logInfo
-INFO: Page Fault No. 1! Requested Page 63
-Jan 14, 2020 2:41:00 AM mmu.LogFile logInfo
-INFO: Page Fault No. 2! Requested Page 4
+Jan 14, 2020 4:46:04 PM mmu.LogFile logInfo
+INFO: Page Fault No. 1! Requested Page 4
+Jan 14, 2020 4:46:04 PM mmu.LogFile logInfo
+INFO: Page Fault No. 2! Requested Page 15
+Jan 14, 2020 4:46:04 PM mmu.LogFile logInfo
+INFO: Page Fault No. 3! Requested Page 17
+Jan 14, 2020 4:46:04 PM mmu.LogFile logInfo
+INFO: Page Fault No. 4! Requested Page 27
+Jan 14, 2020 4:46:04 PM mmu.LogFile logInfo
+INFO: Page Fault No. 5! Requested Page 31
+Jan 14, 2020 4:46:04 PM mmu.LogFile logInfo
+INFO: Page Fault No. 6! Requested Page 48
+Jan 14, 2020 4:46:04 PM mmu.LogFile logInfo
+INFO: Page Fault No. 7! Requested Page 63
+Jan 14, 2020 4:46:04 PM mmu.LogFile logInfo
+INFO: Page Fault No. 8! Requested Page 0
+Jan 14, 2020 4:46:04 PM mmu.LogFile logInfo
+INFO: Page Fault No. 9! Requested Page 1
+Jan 14, 2020 4:46:04 PM mmu.LogFile logInfo
+INFO: Page Fault No. 10! Requested Page 2
+Jan 14, 2020 4:46:04 PM mmu.LogFile logInfo
+INFO: Page Fault No. 11! Requested Page 3
+Jan 14, 2020 4:46:04 PM mmu.LogFile logInfo
+INFO: Page Fault No. 12! Requested Page 4
+Jan 14, 2020 4:46:04 PM mmu.LogFile logInfo
+INFO: Page Fault No. 13! Requested Page 15
+Jan 14, 2020 4:46:04 PM mmu.LogFile logInfo
+INFO: Page Fault No. 14! Requested Page 17
+Jan 14, 2020 4:46:04 PM mmu.LogFile logInfo
+INFO: Page Fault No. 15! Requested Page 27
+Jan 14, 2020 4:46:04 PM mmu.LogFile logInfo
+INFO: Page Fault No. 16! Requested Page 31
+Jan 14, 2020 4:46:04 PM mmu.LogFile logInfo
+INFO: Page Fault No. 17! Requested Page 48
+Jan 14, 2020 4:46:04 PM mmu.LogFile logInfo
+INFO: Page Fault No. 18! Requested Page 63

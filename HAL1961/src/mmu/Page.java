@@ -6,7 +6,7 @@ public class Page {
 	private int pageNumber;
 
 	public Page (int frameNumber) {
-		setSegments(new float[64]);	// 64 float segments
+		setSegments(new float[1024]);	// 1024 float segments
 		for (int i = 0; i < segments.length; i++) {
 			segments[i] = 0.0f;
 		}
@@ -23,7 +23,7 @@ public class Page {
 	
 	// Returns offset-specified data segment
 	public float getSegmentByOffset(short offset) {
-		if(offset < 0 || offset > 63) {
+		if(offset < 0 || offset > 1023) {
 			return -1;
 		}
 		else {
@@ -33,7 +33,7 @@ public class Page {
 	
 	// Sets offset-specified data segment
 	public boolean setSegmentByOffset(short offset, float data) {
-		if(offset < 0 || offset > 63) {
+		if(offset < 0 || offset > 1023) {
 			return false;
 		}
 		else {
