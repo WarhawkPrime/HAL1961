@@ -870,9 +870,7 @@ public class MMU {
 			System.out.println();
 			for(int i =0; i < regs.length; i++) {
 				System.out.println("Register " + i + " : " + regs[i]);
-			}
-			System.out.println();
-			
+			}			
 			//for(int i = 0; i < 65535; i++) {
 				//System.out.println("Registernummer: " + i + " Registerinhalt: " + getSegment(i));
 			//}
@@ -892,7 +890,7 @@ public class MMU {
 		
 		default:
 		}
-
+		System.out.println("FALSCHER BEFEHL IM PROGRAMM!!!");
 		return pcCounter;	//niemals!!!
 		
 	}
