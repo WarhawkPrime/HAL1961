@@ -1,4 +1,14 @@
-Jan. 12, 2020 10:50:15 PM mmu.LogFile logInfo
-INFO: Created new PageTableEntry with index 0
-Jan. 12, 2020 10:50:15 PM mmu.LogFile logInfo
+Jan 14, 2020 2:40:50 AM mmu.LogFile logInfo
 INFO: Created new PageTableEntry with index 1
+Jan 14, 2020 2:40:54 AM mmu.LogFile logInfo
+INFO: Created new PageTableEntry with index 2
+Jan 14, 2020 2:41:00 AM mmu.LogFile logInfo
+INFO: Created new PageTableEntry with index 4
+Jan 14, 2020 2:41:00 AM mmu.LogFile logInfo
+INFO: Created new PageTableEntry with index 31
+Jan 14, 2020 2:41:00 AM mmu.LogFile logInfo
+INFO: Created new PageTableEntry with index 63
+Jan 14, 2020 2:41:00 AM mmu.LogFile logInfo
+INFO: Page Fault No. 1! Requested Page 63
+Jan 14, 2020 2:41:00 AM mmu.LogFile logInfo
+INFO: Page Fault No. 2! Requested Page 4

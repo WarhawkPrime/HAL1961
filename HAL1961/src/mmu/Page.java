@@ -7,6 +7,9 @@ public class Page {
 
 	public Page (int frameNumber) {
 		setSegments(new float[64]);	// 64 float segments
+		for (int i = 0; i < segments.length; i++) {
+			segments[i] = 0.0f;
+		}
 		this.pageNumber = frameNumber;
 	}
 
